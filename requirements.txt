@@ -6,3 +6,4 @@ mysql-connector-python==8.3.0
 allure-pytest==2.13.2
 webdriver-manager==4.0.1
 python-dotenv==1.0.1
+
