@@ -1,0 +1,18 @@
+{
+  "active_env": "qa",
+  "browser": "chromium",
+  "headless": false,
+  
+  "environments": {
+    "qa": {
+      "web_url": "https://atidcollege.co.il/Xamples/expense-tracker/",
+      "api_base_url": "http://localhost:3000", 
+      "mobile_apk_path": "C:\\Users\\yaniv\\Downloads\\atid-expense-travel (1).apk"
+    },
+    "production": {
+      "web_url": "https://production.expense-tracker.com/",
+      "api_base_url": "https://api.production.com",
+      "mobile_apk_path": "C:\\Users\\yaniv\\Downloads\\atid-expense-travel (1).apk"
+    }
+  }
+}
