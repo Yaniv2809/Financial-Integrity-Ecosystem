@@ -1,0 +1,6 @@
+INFO     AutomationLogger:logger.py:41 API Action: Sending POST request to http://localhost:3000/expenses with payload: {'description': 'Business Lunch', 'amount': 120.0, 'currency': 'ILS'}
+INFO     AutomationLogger:logger.py:41 API Action: Received response with status code 201
+INFO     AutomationLogger:logger.py:41 Verification Passed: 201 equals 201
+INFO     AutomationLogger:logger.py:41 Verification Passed: Business Lunch equals Business Lunch
+INFO     AutomationLogger:logger.py:41 Verification Passed: 120 equals 120
+INFO     AutomationLogger:logger.py:41 Verification Passed: 'id' is found in '{'id': '1d22', 'description': 'Business Lunch', 'amount': 120, 'currency': 'ILS'}'

@@ -1,0 +1,10 @@
+{
+  "expenses": [
+    {
+      "id": "1d22",
+      "description": "Business Lunch",
+      "amount": 120,
+      "currency": "ILS"
+    }
+  ]
+}
