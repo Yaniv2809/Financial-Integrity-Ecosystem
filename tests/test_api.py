@@ -1,4 +1,4 @@
-
+import pytest
 import allure
 from workflows.api_workflows import APIWorkflows
 from extensions.verifications import Verifications

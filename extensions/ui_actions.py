@@ -35,3 +35,11 @@ class UIActions:
         log = Logger()
         log.info(f"UI Action: Extracting text from element with selector: '{selector}'")
         return page.locator(selector).inner_text()
+    
+    @staticmethod
+    @allure.step("Select option: '{option}' in element: {selector}")
+    def select_option(page, selector, option):
+        log = Logger()
+        log.info(f"UI Action: Selecting '{option}' in dropdown with selector: '{selector}'")
+        # פקודה מיוחדת של Playwright לבחירה מתוך תפריט נפתח לפי הערך שלו
+        page.locator(selector).select_option(label=option)
