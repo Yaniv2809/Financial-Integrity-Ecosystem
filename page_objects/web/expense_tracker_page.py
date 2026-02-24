@@ -10,3 +10,4 @@ class ExpenseTrackerPage:
     add_date = "input[id='expense-date']"              # שדה תאריך ההוצאה
     btn_add = "button[id='add-expense']"              # כפתור הוספת הוצאה
     list_expense_rows = "tbody tr"            # שורות הטבלה (לאימות נתונים)
+    delete_buttons = "//*[@id='expense-list']//button"     # כפתורי מחיקה (לאימות מחיקה)
