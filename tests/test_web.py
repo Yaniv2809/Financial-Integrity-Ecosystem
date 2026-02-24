@@ -1,5 +1,6 @@
 import pytest
 import allure
+import requests
 from playwright.sync_api import Playwright
 from workflows.web.web_workflows import WebWorkflows
 from config.config import ConfigManager
@@ -10,7 +11,6 @@ class TestWeb:
     @pytest.fixture(autouse=True, scope="class")
     def setup(self, playwright: Playwright):
         global browser, context, page
-  
         browser = playwright.chromium.launch(headless=False, channel="chrome", slow_mo=500)
         context = browser.new_context()
         page = context.new_page()
@@ -48,7 +48,6 @@ class TestWeb:
     @allure.description("This test uses Data-Driven Testing to add several expenses one after another")
     @pytest.mark.parametrize("description, amount, category, date", expense_data)
     def test02_create_multiple_expenses_ddt(self, description, amount, category, date):
-        # 1. ביצוע הפעולה - הפעם אנחנו מעבירים את המשתנים שמגיעים מהרשימה!
         WebWorkflows.create_expense(
             page=page, 
             description=description,
@@ -57,10 +56,54 @@ class TestWeb:
             category=category
             
         )
-        # 2. אימות - נבדוק שההוצאה החדשה אכן מופיעה ברשימה עם הפרטים הנכונים
+
         WebVerify.contain_text(page.locator("[class='expense-name']").last, description)
         WebVerify.contain_text(page.locator("[class='expense-amount']").last, str(amount))
         WebVerify.contain_text(page.locator("[class='expense-date']").last, date)
         WebVerify.contain_text(page.locator("[class='expense-category']").last, category)
 
-    
+    @allure.title("Verify expense list count")
+    @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
+    def test03_verify_expense_list_count(self):
+
+        initial_count = page.locator(".expense-name").count()
+        print(f"\nCurrent expenses count: {initial_count}")
+        
+        WebWorkflows.create_expense(page, description="Coffee", amount=15, category="Food", date="2025-06-01")
+        WebWorkflows.create_expense(page, description="Bus ticket", amount=10, category="Transportation", date="2025-06-02")
+
+        expected_new_count = initial_count + 2
+        WebVerify.verify_element_count(page.locator("[class='expense-name']"), expected_new_count)
+        
+        print(f"Verified new count is exactly: {expected_new_count}")
+
+
+    @allure.title("Verify expense creation with real-time API conversion")
+    @allure.description("Fetches real-time USD to ILS conversion rate via API, calculates the expense, and adds it via UI")
+    def test04_verify_expense_with_api_rate(self):
+        # 1. משיכת שער הדולר הנוכחי מ-API חינמי באינטרנט
+        response = requests.get("https://open.er-api.com/v6/latest/USD")
+        data = response.json()
+        
+        # שולפים את שער השקל מתוך הנתונים שקיבלנו (למשל 3.75)
+        ils_rate = data['rates']['ILS']
+        
+        # 2. חישוב ההוצאה: 100 דולר בשקלים (מעגלים ל-2 ספרות אחרי הנקודה)
+        usd_amount = 100
+        calculated_ils = round(usd_amount * ils_rate, 2)
+        
+        description = f"Business Trip NY ({usd_amount} USD)"
+        print(f"\nReal-time ILS Rate: {ils_rate}. Converted Amount: {calculated_ils} ILS")
+        
+        # 3. ביצוע הפעולה באתר (הזרקת הנתון המחושב לתוך ה-UI!)
+        WebWorkflows.create_expense(
+            page=page, 
+            description=description, 
+            amount=calculated_ils, 
+            category="Transportation", 
+            date="2025-06-10"
+        )
+        
+        # 4. אימות שהמערכת שמרה והציגה את הסכום המדויק שחישבנו מול ה-API
+        WebVerify.contain_text(page.locator(".expense-name").last, description)
+        WebVerify.contain_text(page.locator(".expense-amount").last, str(calculated_ils))

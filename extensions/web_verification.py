@@ -75,3 +75,12 @@ class WebVerify:
     def soft_all():
         """Raises all collected assertion errors at once."""
         verify_expectations()
+
+
+    @staticmethod
+    @allure.step("Verify that the element count is exactly {expected_count}")
+    def verify_element_count(element, expected_count: int):
+        """
+        מוודא שכמות האלמנטים על המסך תואמת למספר המצופה.
+        """
+        expect(element).to_have_count(expected_count, timeout=5000)
