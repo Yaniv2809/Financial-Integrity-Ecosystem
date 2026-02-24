@@ -29,7 +29,6 @@ class Logger:
             # מגדיר גם הדפסה לקונסול (כדי שנראה בזמן אמת)
             console_handler = logging.StreamHandler()
 
-            # פורמט ההודעה: תאריך ושעה - רמת ההודעה - ההודעה עצמה
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
             file_handler.setFormatter(formatter)
             console_handler.setFormatter(formatter)

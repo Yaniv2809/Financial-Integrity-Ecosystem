@@ -2,10 +2,6 @@ import requests
 from utils.logger import Logger
 
 class APIActions:
-    """
-    מחלקה זו עוטפת את פעולות ה-API הבסיסיות (GET, POST, PUT, DELETE).
-    היא משלבת את הלוגר שלנו כדי שכל בקשה שנשלחת ותשובה שמתקבלת יתועדו אוטומטית!
-    """
     @staticmethod
     def get(url):
         log = Logger()

@@ -1,0 +1,19 @@
+INFO     AutomationLogger:logger.py:40 ====== SETUP: Starting Test Execution ======
+INFO     AutomationLogger:logger.py:40 UI Action: Typing 'Client Dinner' into element with selector: 'input[id='expense-name']'
+INFO     AutomationLogger:logger.py:40 UI Action: Typing '320' into element with selector: 'input[id='expense-amount']'
+INFO     AutomationLogger:logger.py:40 UI Action: Selecting 'Food' in dropdown with selector: 'select[id='expense-category']'
+INFO     AutomationLogger:logger.py:40 UI Action: Typing '2025-05-22' into element with selector: 'input[id='expense-date']'
+INFO     AutomationLogger:logger.py:40 UI Action: Clicking on element with selector: 'button[id='add-expense']'
+INFO     AutomationLogger:logger.py:40 Verification: Waiting for text 'Client Dinner' to be visible on the page
+INFO     AutomationLogger:logger.py:40 Verification Passed: Text 'Client Dinner' is visible
+INFO     AutomationLogger:logger.py:40 Verification: Waiting for text '320' to be visible on the page
+INFO     AutomationLogger:logger.py:40 Verification Passed: Text '320' is visible
+INFO     AutomationLogger:logger.py:40 Verification: Waiting for text 'Food' to be visible on the page
+ERROR    AutomationLogger:logger.py:43 Verification Failed: Text 'Food' is NOT visible. Error: Locator expected to be visible
+Actual value: hidden 
+Call log:
+  - Expect "to_be_visible" with timeout 5000ms
+  - waiting for get_by_text("Food").first
+    9 × locator resolved to <option value="food">Food</option>
+      - unexpected value "hidden"
+INFO     AutomationLogger:logger.py:40 ====== TEARDOWN: Test Execution Completed ======

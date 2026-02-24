@@ -1,0 +1,2 @@
+INFO     AutomationLogger:logger.py:41 ====== SETUP: Starting Test Execution ======
+INFO     AutomationLogger:logger.py:41 ====== TEARDOWN: Test Execution Completed ======

@@ -1,0 +1,5 @@
+INFO     AutomationLogger:logger.py:40 ====== SETUP: Starting Test Execution ======
+INFO     AutomationLogger:logger.py:40 UI Action: Typing 'Client Dinner' into element with selector: 'input[id='expense-name']'
+INFO     AutomationLogger:logger.py:40 UI Action: Typing '320' into element with selector: 'input[id='expense-amount']'
+INFO     AutomationLogger:logger.py:40 UI Action: Selecting '2025-05-22' in dropdown with selector: 'select[id='expense-category']'
+INFO     AutomationLogger:logger.py:40 ====== TEARDOWN: Test Execution Completed ======

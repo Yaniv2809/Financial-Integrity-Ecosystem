@@ -5,6 +5,12 @@
       "description": "Business Lunch",
       "amount": 120,
       "currency": "ILS"
+    },
+    {
+      "id": "32a9",
+      "description": "Food",
+      "amount": 190,
+      "currency": "ILS"
     }
   ]
 }
