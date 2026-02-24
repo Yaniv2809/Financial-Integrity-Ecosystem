@@ -1,6 +1,7 @@
 import pytest
 import allure
 import requests
+from utils.common_ops import read_data_from_csv
 from playwright.sync_api import Playwright
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from workflows.web.web_workflows import WebWorkflows
@@ -17,9 +18,7 @@ class TestWeb:
         page = context.new_page()
         url = ConfigManager.get_env_data()['web_url']
         page.goto(url)
-    
         yield
-        
         context.close()
         page.close()
 
@@ -31,13 +30,13 @@ class TestWeb:
             description="Business Lunch Web", 
             amount=150, 
             date="2025-05-20",
-            category="Food"
-            
+            category="Food"    
         )
-        WebVerify.contain_text(page.locator(".expense-name"), "Business Lunch Web")
-        WebVerify.contain_text(page.locator(".expense-amount"), "150")
-        WebVerify.contain_text(page.locator(".expense-date"), "2025-05-20")
-        WebVerify.contain_text(page.locator(".expense-category"), "Food")
+
+        WebVerify.contain_text(page.locator(".expense-name").last, "Business Lunch Web")
+        WebVerify.contain_text(page.locator(".expense-amount").last, "150")
+        WebVerify.contain_text(page.locator(".expense-date").last, "2025-05-20")
+        WebVerify.contain_text(page.locator(".expense-category").last, "food") # <-- שים לב לאותיות קטנות!
 
     expense_data = [
         ("Taxi to office", 50, "Transportation", "2025-05-21"),
@@ -45,23 +44,25 @@ class TestWeb:
         ("New Monitor", 850, "Accommodation", "2025-05-23")
     ]
 
+    EXPENSES_DATA_PATH = r"data\ddt\expenses_data.csv"
     @allure.title("Create multiple expenses via DDT")
-    @allure.description("This test uses Data-Driven Testing to add several expenses one after another")
-    @pytest.mark.parametrize("description, amount, category, date", expense_data)
-    def test02_create_multiple_expenses_ddt(self, description, amount, category, date):
+    @allure.description("This test uses Data-Driven Testing to add several expenses, reading from an external CSV file")
+    @pytest.mark.parametrize("expense_data", read_data_from_csv(EXPENSES_DATA_PATH))
+    def test02_create_multiple_expenses_ddt(self, expense_data):
+
         WebWorkflows.create_expense(
             page=page, 
-            description=description,
-            amount=amount, 
-            date=date,
-            category=category  
+            description=expense_data["description"],
+            amount=expense_data["amount"], 
+            date=expense_data["date"],
+            category=expense_data["category"]  
         )
-
-        WebVerify.contain_text(page.locator("[class='expense-name']").last, description)
-        WebVerify.contain_text(page.locator("[class='expense-amount']").last, str(amount))
-        WebVerify.contain_text(page.locator("[class='expense-date']").last, date)
-        WebVerify.contain_text(page.locator("[class='expense-category']").last, category)
-
+        
+        WebVerify.contain_text(page.locator(".expense-name").last, expense_data["description"])
+        WebVerify.contain_text(page.locator(".expense-amount").last, str(expense_data["amount"]))
+        WebVerify.contain_text(page.locator(".expense-date").last, expense_data["date"])
+        WebVerify.contain_text(page.locator(".expense-category").last, expense_data["category"].lower())
+    
     @allure.title("Verify expense list count")
     @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
     def test03_verify_expense_list_count(self):
