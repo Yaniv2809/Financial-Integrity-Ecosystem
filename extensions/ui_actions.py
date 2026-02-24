@@ -16,11 +16,13 @@ class UIActions:
         page.goto(url)
 
     @staticmethod
-    @allure.step("Click on element: {selector}")
-    def click(page, selector):
-        log = Logger()
-        log.info(f"UI Action: Clicking on element with selector: '{selector}'")
-        page.locator(selector).click()
+    @allure.step("UI Action: Clicking on element with selector: '{selector}'")
+    def click(page, selector: str, is_last: bool = False):
+  
+        if is_last:
+            page.locator(selector).last.click()
+        else:
+            page.locator(selector).click()
 
     @staticmethod
     @allure.step("Fill text: '{text}' into element: {selector}")

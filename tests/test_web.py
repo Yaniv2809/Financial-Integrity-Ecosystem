@@ -2,6 +2,7 @@ import pytest
 import allure
 import requests
 from playwright.sync_api import Playwright
+from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from workflows.web.web_workflows import WebWorkflows
 from config.config import ConfigManager
 from extensions.ui_actions import UIActions
@@ -53,8 +54,7 @@ class TestWeb:
             description=description,
             amount=amount, 
             date=date,
-            category=category
-            
+            category=category  
         )
 
         WebVerify.contain_text(page.locator("[class='expense-name']").last, description)
@@ -81,21 +81,17 @@ class TestWeb:
     @allure.title("Verify expense creation with real-time API conversion")
     @allure.description("Fetches real-time USD to ILS conversion rate via API, calculates the expense, and adds it via UI")
     def test04_verify_expense_with_api_rate(self):
-        # 1. משיכת שער הדולר הנוכחי מ-API חינמי באינטרנט
         response = requests.get("https://open.er-api.com/v6/latest/USD")
         data = response.json()
         
-        # שולפים את שער השקל מתוך הנתונים שקיבלנו (למשל 3.75)
         ils_rate = data['rates']['ILS']
         
-        # 2. חישוב ההוצאה: 100 דולר בשקלים (מעגלים ל-2 ספרות אחרי הנקודה)
         usd_amount = 100
         calculated_ils = round(usd_amount * ils_rate, 2)
         
         description = f"Business Trip NY ({usd_amount} USD)"
         print(f"\nReal-time ILS Rate: {ils_rate}. Converted Amount: {calculated_ils} ILS")
         
-        # 3. ביצוע הפעולה באתר (הזרקת הנתון המחושב לתוך ה-UI!)
         WebWorkflows.create_expense(
             page=page, 
             description=description, 
@@ -103,7 +99,40 @@ class TestWeb:
             category="Transportation", 
             date="2025-06-10"
         )
-        
-        # 4. אימות שהמערכת שמרה והציגה את הסכום המדויק שחישבנו מול ה-API
+
         WebVerify.contain_text(page.locator(".expense-name").last, description)
         WebVerify.contain_text(page.locator(".expense-amount").last, str(calculated_ils))
+
+
+    @allure.title("Verify creation of expense with negative amount is prevented")
+    @allure.description("Negative test: Tries to add an expense with a negative amount (-50) and verifies it fails or isn't added")
+    def test05_negative_amount_validation(self):
+        # 1. בודקים כמה הוצאות יש כרגע (כדי לוודא שלא תתווסף אחת חדשה)
+        initial_count = page.locator(".expense-name").count()
+        
+        # 2. ניסיון לבצע פעולה אסורה: סכום שלילי
+        WebWorkflows.create_expense(page, description="Negative Test", amount=-50)
+        
+        # 3. אימות - מוודאים שההוצאה *לא* נוספה, כלומר הכמות נשארה בדיוק אותו הדבר
+        WebVerify.verify_element_count(page.locator(".expense-name"), initial_count)
+
+    
+    @allure.title("Verify deletion of an expense")
+    @allure.description("Adds a temporary expense, clicks its delete button, and verifies it is removed from the list")
+    def test06_delete_expense(self):
+        # 1. יצירת הוצאה זמנית שמיועדת למחיקה
+        expense_name = "To Be Deleted"
+        WebWorkflows.create_expense(page, description=expense_name, amount=99)
+        
+        # 2. שמירת כמות האלמנטים *לפני* המחיקה
+        count_before_delete = page.locator(".expense-name").count()
+        print(f"\nCount before delete: {count_before_delete}")
+        
+        # 3. לחיצה על כפתור המחיקה של ההוצאה האחרונה שהוספנו
+        # משתמשים בסלקטור שהגדרת ב-ExpenseTrackerPage!
+        UIActions.click(page, ExpenseTrackerPage.delete_buttons, is_last=True)
+        
+        # 4. אימות - מוודאים שהכמות הכוללת ירדה ב-1
+        expected_count_after = count_before_delete - 1
+        WebVerify.verify_element_count(page.locator(".expense-name"), expected_count_after)
+        print(f"Count after delete verified as: {expected_count_after}")
