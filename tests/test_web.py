@@ -152,7 +152,7 @@ class TestWeb:
             
         except Exception as e:
             error_str = str(e)
-            print("\n⏳ Sending error to Gemini for analysis... please wait...")
+            print("\n Sending error to Gemini for analysis... please wait...")
             
             #call the AI function to get a professional analysis of the failure
             ai_explanation = get_ai_error_analysis(error_str)
