@@ -17,7 +17,6 @@ class WebVerify:
     def strings_are_equal(actual:str,expected:str,message=None):
         assert actual == expected,message
 
-
     @staticmethod
     @allure.step("Verify that the element is visible")
     def visible(element: Locator):
@@ -81,6 +80,23 @@ class WebVerify:
     @allure.step("Verify that the element count is exactly {expected_count}")
     def verify_element_count(element, expected_count: int):
         """
-        מוודא שכמות האלמנטים על המסך תואמת למספר המצופה.
+       verifies that the number of elements matching the locator is equal to the expected count.
         """
         expect(element).to_have_count(expected_count, timeout=5000)
+
+    @staticmethod
+    @allure.step("Verify element does not overflow its parent container")
+    def verify_no_container_overflow(element):
+        """
+       checks if the element's text overflows its parent container (e.g., a card) and asserts that it does not.
+        This is useful for catching UI bugs where long text might break the layout.
+        """
+        is_overflowing = element.evaluate(
+            "(el) => {"
+            "  const parent = el.parentElement;"
+            "  /* checks if the element's text overflows its parent container */"
+            "  return el.getBoundingClientRect().right > parent.getBoundingClientRect().right || "
+            "         el.scrollWidth > el.clientWidth;"
+            "}"
+        )
+        assert not is_overflowing, "UI Bug: The text overflows its parent container (the card)!"

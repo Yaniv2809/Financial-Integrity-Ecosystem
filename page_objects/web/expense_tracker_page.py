@@ -12,3 +12,8 @@ class ExpenseTrackerPage:
     list_expense_rows = "tbody tr"            # שורות הטבלה (לאימות נתונים)
     delete_buttons = "//*[@id='expense-list']//button"     # כפתורי מחיקה (לאימות מחיקה)
     expanse_list = "[id='expense-list']"                         # רשימת ההוצאות)
+    #list elements for verification
+    expense_name_items = ".expense-name"          # שמות ההוצאות ברשימה
+    expense_amount_items = ".expense-amount"      # סכומי ההוצאות ברשימה
+    expense_date_items = ".expense-date"          # תאריכי ההוצאות ברשימה
+    expense_category_items = ".expense-category"  # קטגוריות ההוצאות ברשימה

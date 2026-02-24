@@ -1,6 +1,7 @@
 import pytest
 import allure
 import requests
+from utils.ai import get_ai_error_analysis
 from utils.common_ops import read_data_from_csv
 from playwright.sync_api import Playwright
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
@@ -32,17 +33,11 @@ class TestWeb:
             date="2025-05-20",
             category="Food"    
         )
-
         WebVerify.contain_text(page.locator(".expense-name").last, "Business Lunch Web")
-        WebVerify.contain_text(page.locator(".expense-amount").last, "150")
-        WebVerify.contain_text(page.locator(".expense-date").last, "2025-05-20")
-        WebVerify.contain_text(page.locator(".expense-category").last, "food") # <-- שים לב לאותיות קטנות!
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_amount_items).last, "150")
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_date_items).last, "2025-05-20")
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, "food") # <-- שים לב לאותיות קטנות!
 
-    expense_data = [
-        ("Taxi to office", 50, "Transportation", "2025-05-21"),
-        ("Client Dinner", 320, "Food", "2025-05-22"),
-        ("New Monitor", 850, "Accommodation", "2025-05-23")
-    ]
 
     EXPENSES_DATA_PATH = r"data\ddt\expenses_data.csv"
     @allure.title("Create multiple expenses via DDT")
@@ -57,11 +52,10 @@ class TestWeb:
             date=expense_data["date"],
             category=expense_data["category"]  
         )
-        
-        WebVerify.contain_text(page.locator(".expense-name").last, expense_data["description"])
-        WebVerify.contain_text(page.locator(".expense-amount").last, str(expense_data["amount"]))
-        WebVerify.contain_text(page.locator(".expense-date").last, expense_data["date"])
-        WebVerify.contain_text(page.locator(".expense-category").last, expense_data["category"].lower())
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, expense_data["description"])
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_amount_items).last, expense_data["amount"])
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_date_items).last, expense_data["date"])
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, expense_data["category"].lower()) # <-- שים לב לאותיות קטנות!
     
     @allure.title("Verify expense list count")
     @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
@@ -75,7 +69,6 @@ class TestWeb:
 
         expected_new_count = initial_count + 2
         WebVerify.verify_element_count(page.locator("[class='expense-name']"), expected_new_count)
-        
         print(f"Verified new count is exactly: {expected_new_count}")
 
 
@@ -100,40 +93,71 @@ class TestWeb:
             category="Transportation", 
             date="2025-06-10"
         )
-
-        WebVerify.contain_text(page.locator(".expense-name").last, description)
-        WebVerify.contain_text(page.locator(".expense-amount").last, str(calculated_ils))
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, description)
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_amount_items).last, str(calculated_ils))
 
 
     @allure.title("Verify creation of expense with negative amount is prevented")
     @allure.description("Negative test: Tries to add an expense with a negative amount (-50) and verifies it fails or isn't added")
     def test05_negative_amount_validation(self):
-        # 1. בודקים כמה הוצאות יש כרגע (כדי לוודא שלא תתווסף אחת חדשה)
-        initial_count = page.locator(".expense-name").count()
-        
-        # 2. ניסיון לבצע פעולה אסורה: סכום שלילי
+        initial_count = page.locator(ExpenseTrackerPage.expense_name_items).count()
         WebWorkflows.create_expense(page, description="Negative Test", amount=-50)
-        
-        # 3. אימות - מוודאים שההוצאה *לא* נוספה, כלומר הכמות נשארה בדיוק אותו הדבר
-        WebVerify.verify_element_count(page.locator(".expense-name"), initial_count)
+        WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), initial_count)
 
     
     @allure.title("Verify deletion of an expense")
     @allure.description("Adds a temporary expense, clicks its delete button, and verifies it is removed from the list")
     def test06_delete_expense(self):
-        # 1. יצירת הוצאה זמנית שמיועדת למחיקה
         expense_name = "To Be Deleted"
         WebWorkflows.create_expense(page, description=expense_name, amount=99)
-        
-        # 2. שמירת כמות האלמנטים *לפני* המחיקה
-        count_before_delete = page.locator(".expense-name").count()
+        count_before_delete = page.locator(ExpenseTrackerPage.expense_name_items).count()
         print(f"\nCount before delete: {count_before_delete}")
-        
-        # 3. לחיצה על כפתור המחיקה של ההוצאה האחרונה שהוספנו
-        # משתמשים בסלקטור שהגדרת ב-ExpenseTrackerPage!
         UIActions.click(page, ExpenseTrackerPage.delete_buttons, is_last=True)
-        
-        # 4. אימות - מוודאים שהכמות הכוללת ירדה ב-1
         expected_count_after = count_before_delete - 1
-        WebVerify.verify_element_count(page.locator(".expense-name"), expected_count_after)
+        WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), expected_count_after)
         print(f"Count after delete verified as: {expected_count_after}")
+
+
+
+    @allure.title("Verify creation of expense with a very long description")
+    @allure.description("Boundary test: Adds an expense with a 100-character description to ensure the UI handles it correctly")
+    def test07_long_description_boundary(self):
+        long_text = "Test" * 25
+        WebWorkflows.create_expense(page, description=long_text, amount=100)
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, long_text)
+        WebVerify.verify_no_container_overflow(page.locator(ExpenseTrackerPage.expense_name_items).last)
+
+
+    @allure.title("Verify data persistence after page reload")
+    @allure.description("Adds an expense, reloads the page, and verifies the expense is still displayed (checks LocalStorage)")
+    def test08_data_persistence_on_reload(self):
+        unique_desc = "Persistence Expense Test"
+        WebWorkflows.create_expense(page, description=unique_desc, amount=77)
+        page.reload()
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, unique_desc)
+
+
+    @allure.title("Verify creation of expense with empty amount is prevented")
+    @allure.description("Negative test: Tries to add an expense without entering an amount and verifies it isn't added")
+    def test09_empty_amount_validation(self):
+        initial_count = page.locator(ExpenseTrackerPage.expense_name_items).count()
+        WebWorkflows.create_expense(page, description="Empty Amount Test", amount="")
+        WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), initial_count)
+
+    @allure.title("AI Failure Analysis Test")
+    @allure.description("Intentionally fails to demonstrate REAL AI error analysis using Google Gemini")
+    def test10_ai_failure_analysis(self):
+        try:
+            page.locator("#non-existent-button").click(timeout=2000)
+            
+        except Exception as e:
+            error_str = str(e)
+            print("\n⏳ Sending error to Gemini for analysis... please wait...")
+            
+            #call the AI function to get a professional analysis of the failure
+            ai_explanation = get_ai_error_analysis(error_str)
+            print("=========================================")
+            print(ai_explanation)
+            print("=========================================")
+            allure.attach(ai_explanation, name="Gemini AI Failure Analysis", attachment_type=allure.attachment_type.TEXT)
+            raise e
