@@ -14,7 +14,7 @@ class TestWeb:
     @pytest.fixture(autouse=True, scope="class")
     def setup(self, playwright: Playwright):
         global browser, context, page
-        browser = playwright.chromium.launch(headless=False, channel="chrome", slow_mo=500)
+        browser = playwright.chromium.launch(headless=False, channel="chrome", slow_mo=1000)
         context = browser.new_context()
         page = context.new_page()
         url = ConfigManager.get_env_data()['web_url']
@@ -33,10 +33,10 @@ class TestWeb:
             date="2025-05-20",
             category="Food"    
         )
-        WebVerify.contain_text(page.locator(".expense-name").last, "Business Lunch Web")
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, "Business Lunch Web")
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_amount_items).last, "150")
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_date_items).last, "2025-05-20")
-        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, "food") # <-- שים לב לאותיות קטנות!
+        WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, "food")
 
 
     EXPENSES_DATA_PATH = r"data\ddt\expenses_data.csv"
@@ -61,14 +61,14 @@ class TestWeb:
     @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
     def test03_verify_expense_list_count(self):
 
-        initial_count = page.locator(".expense-name").count()
+        initial_count = page.locator(ExpenseTrackerPage.expense_name_items).count()
         print(f"\nCurrent expenses count: {initial_count}")
         
         WebWorkflows.create_expense(page, description="Coffee", amount=15, category="Food", date="2025-06-01")
         WebWorkflows.create_expense(page, description="Bus ticket", amount=10, category="Transportation", date="2025-06-02")
 
         expected_new_count = initial_count + 2
-        WebVerify.verify_element_count(page.locator("[class='expense-name']"), expected_new_count)
+        WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), expected_new_count)
         print(f"Verified new count is exactly: {expected_new_count}")
 
 
@@ -145,19 +145,26 @@ class TestWeb:
         WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), initial_count)
 
     @allure.title("AI Failure Analysis Test")
-    @allure.description("Intentionally fails to demonstrate REAL AI error analysis using Google Gemini")
+    @allure.description("Intentionally fails to demonstrate REAL AI error analysis using Groq/Llama3")
     def test10_ai_failure_analysis(self):
         try:
+            # מנסים לחפש כפתור שלא קיים
             page.locator("#non-existent-button").click(timeout=2000)
             
         except Exception as e:
             error_str = str(e)
-            print("\n Sending error to Gemini for analysis... please wait...")
+            print("\n⏳ Sending error to Groq AI for analysis... please wait...")
             
-            #call the AI function to get a professional analysis of the failure
+            # שליחה ל-AI
             ai_explanation = get_ai_error_analysis(error_str)
+            
+            # הדפסה לטרמינל
             print("=========================================")
             print(ai_explanation)
             print("=========================================")
-            allure.attach(ai_explanation, name="Gemini AI Failure Analysis", attachment_type=allure.attachment_type.TEXT)
+            
+            # צירוף לדוח Allure
+            allure.attach(ai_explanation, name="Groq AI Failure Analysis", attachment_type=allure.attachment_type.TEXT)
+            
+            # הכשלת הטסט כדי שיופיע כאדום בדוח
             raise e

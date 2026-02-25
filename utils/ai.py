@@ -5,36 +5,50 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_ai_error_analysis(error_message: str) -> str:
-
-    api_key = os.getenv("GEMINI_API_KEY")
+    """
+    מקבלת שגיאה, שולחת ל-Groq AI (מודל Llama 3.1) דרך REST API, ומחזירה ניתוח.
+    """
+    api_key = os.getenv("GROQ_API_KEY")
     
+    # ניקוי המפתח למקרה שהוכנסו גרשיים או רווחים בטעות בקובץ ה-.env
+    if api_key:
+        api_key = api_key.replace('"', '').replace("'", "").strip()
+        
     if not api_key:
-        return "AI Analysis failed: GEMINI_API_KEY not found in .env file."
- 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
-    
-    payload = {
-        "contents": [{
-            "parts": [{
-                "text": f"You are a Senior QA Engineer. Analyze this Playwright error in 2 short sentences: '{error_message}'"
-            }]
-        }]
-    }
+        return "🤖 AI Analysis failed: GROQ_API_KEY not found in .env file."
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
     
     headers = {
-        'Content-Type': 'application/json'
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "llama-3.1-8b-instant", # המודל העדכני והתקין!
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a Senior QA Automation Engineer."
+            },
+            {
+                "role": "user",
+                "content": f"Analyze this Playwright test error in 2 short sentences and suggest a fix: '{error_message}'"
+            }
+        ]
     }
 
     try:
         response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()
         
+        # אם יש שגיאה, הפעם נדפיס בדיוק מה השרת של Groq אומר לנו!
+        if not response.ok:
+            return f"🤖 Groq API Error {response.status_code}:\n{response.text}"
+            
         data = response.json()
-        ai_text = data['candidates'][0]['content']['parts'][0]['text']
+        ai_text = data['choices'][0]['message']['content']
         
-        return " Gemini AI Analysis:\n\n" + ai_text
+        return "🤖 AI Analysis (Powered by Groq/Llama-3.1):\n\n" + ai_text
         
-    except requests.exceptions.HTTPError as http_err:
-        return f" Google API Error: {http_err}\nResponse details: {response.text}"
     except Exception as e:
-        return f"AI Analysis failed: {str(e)}"
+        return f"🤖 AI Analysis failed: {str(e)}"
