@@ -1,40 +1,43 @@
+import allure
 from extensions.api_actions import APIActions
-from config.config import ConfigManager
+
+BASE_URL = "http://localhost:3000/expenses"
 
 class APIWorkflows:
-    """
-    מחלקה זו מרכזת את כל הזרימות העסקיות (Business Flows) שקשורות ל-API של מערכת ההוצאות.
-    """
 
     @staticmethod
-    def create_expense(description, amount, currency="ILS"):
-        """
-        זרימה עסקית: יצירת הוצאה חדשה במערכת.
-        הפונקציה מושכת את הכתובת, בונה את ה-Payload הנדרש, ושולחת אותו לשרת.
-        """
-        # משיכת כתובת השרת מתוך קובץ הקונפיגורציה שיצרנו קודם
-        base_url = ConfigManager.get_env_data()['api_base_url']
-        endpoint = f"{base_url}/expenses"
-        
-        # יצירת אובייקט הנתונים (מילון) שנישלח לשרת
+    @allure.step("⚙️ Workflow: Get All Expenses")
+    def get_all_expenses():
+        return APIActions.get(BASE_URL)
+
+    @staticmethod
+    @allure.step("⚙️ Workflow: Get Expense by ID: {expense_id}")
+    def get_expense_by_id(expense_id):
+        return APIActions.get(f"{BASE_URL}/{expense_id}")
+
+    @staticmethod
+    @allure.step("⚙️ Workflow: Create New Expense")
+    def create_expense(description, amount, date, category):
         payload = {
             "description": description,
-            "amount": float(amount),
-            "currency": currency
+            "amount": amount,
+            "date": date,
+            "category": category
         }
-        
-        # שימוש במעטפת שיצרנו ב-extensions כדי לבצע בקשת POST
-        response = APIActions.post(endpoint, payload)
-        return response
+        return APIActions.post(BASE_URL, payload)
 
     @staticmethod
-    def get_all_expenses():
-        """
-        זרימה עסקית: שליפת כל ההוצאות הקיימות במערכת (GET).
-        """
-        base_url = ConfigManager.get_env_data()['api_base_url']
-        endpoint = f"{base_url}/expenses"
-        
-        # שימוש במעטפת שיצרנו ב-extensions כדי לבצע בקשת GET
-        response = APIActions.get(endpoint)
-        return response
+    @allure.step("⚙️ Workflow: Update Expense ID: {expense_id}")
+    def update_expense(expense_id, description, amount, date, category):
+        payload = {
+            "description": description,
+            "amount": amount,
+            "date": date,
+            "category": category
+        }
+        return APIActions.put(f"{BASE_URL}/{expense_id}", payload)
+
+    @staticmethod
+    @allure.step("⚙️ Workflow: Delete Expense ID: {expense_id}")
+    def delete_expense(expense_id):
+        return APIActions.delete(f"{BASE_URL}/{expense_id}")

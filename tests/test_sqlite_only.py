@@ -3,11 +3,12 @@ import allure
 from extensions.db_actions import DBActions
 from extensions.db_verifications import DBVerifications
 
-# הנתיב המדויק והקשיח למסד הנתונים שלך (הוספתי r לפני כדי שווינדוס יקרא את הלוכסנים נכון)
 DB_PATH = r"C:\Users\yaniv\Desktop\Financial-Integrity-Ecosystem\data\expense_db.db"
 
-class TestSQLiteDB:
+#this test class is for checking that our DB actions and verifications work correctly in isolation, without involving the web UI. 
+#It's a sanity check for our DB layer before we integrate it with the web tests.
 
+class TestSQLiteDB:
     @pytest.fixture(scope="class", autouse=True)
     def setup(self):
         print("\n[SETUP] Preparing the Database...")
@@ -30,6 +31,8 @@ class TestSQLiteDB:
         yield 
         print("\n[TEARDOWN] DB Tests completed.")
 
+
+
     @allure.title("DB Test 01: Verify existing expense")
     @allure.description("Queries the DB to ensure the setup data was inserted correctly.")
     def test01_verify_expense(self):
@@ -39,6 +42,8 @@ class TestSQLiteDB:
         DBVerifications.verify_record_count(records, expected_count=1)
         #index: 0=id, 1=expense_name, 2=amount, 3=date, 4=category
         assert records[0][2] == 3500.0, f" Amount mismatch! Expected 3500.0, got {records[0][2]}"
+
+
 
     @allure.title("DB Test 02: Insert and verify new expense")
     @allure.description("Inserts a new expense and immediately verifies it in the DB.")

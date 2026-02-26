@@ -1,0 +1,1 @@
+mobile_apk_path = "C:\\Users\\yaniv\\Downloads\\atid-expense-travel (1).apk"

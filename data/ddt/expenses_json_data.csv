@@ -1,0 +1,6 @@
+description,amount,category,date
+DDT_Coffee, 15, 2025-01-01, Food
+DDT_Bus, 6, 2025-01-02, Transport
+DDT_Movie, 45, 2025-01-03, Entertainment
+DDT_Book, 100, 2025-01-04, Education
+DDT_Mouse, 120, 2025-01-05, Other

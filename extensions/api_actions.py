@@ -1,37 +1,28 @@
 import requests
-from utils.logger import Logger
+import allure
 
 class APIActions:
+    
     @staticmethod
+    @allure.step("🌐 API Action: Sending GET request to {url}")
     def get(url):
-        log = Logger()
-        log.info(f"API Action: Sending GET request to {url}")
         response = requests.get(url)
-        log.info(f"API Action: Received response with status code {response.status_code}")
         return response
 
     @staticmethod
+    @allure.step("🌐 API Action: Sending POST request to {url}")
     def post(url, payload):
-        log = Logger()
-        log.info(f"API Action: Sending POST request to {url} with payload: {payload}")
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(url, json=payload, headers=headers)
-        log.info(f"API Action: Received response with status code {response.status_code}")
+        response = requests.post(url, json=payload)
         return response
 
     @staticmethod
+    @allure.step("🌐 API Action: Sending PUT request to {url}")
     def put(url, payload):
-        log = Logger()
-        log.info(f"API Action: Sending PUT request to {url} with payload: {payload}")
-        headers = {'Content-Type': 'application/json'}
-        response = requests.put(url, json=payload, headers=headers)
-        log.info(f"API Action: Received response with status code {response.status_code}")
+        response = requests.put(url, json=payload)
         return response
 
     @staticmethod
+    @allure.step("🌐 API Action: Sending DELETE request to {url}")
     def delete(url):
-        log = Logger()
-        log.info(f"API Action: Sending DELETE request to {url}")
         response = requests.delete(url)
-        log.info(f"API Action: Received response with status code {response.status_code}")
         return response

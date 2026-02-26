@@ -23,6 +23,7 @@ class TestWeb:
         context.close()
         page.close()
 
+    #1
     @allure.title("Create a new expense via Web UI")
     @allure.description("This test verifies that a new expense can be added to the tracker")
     def test01_create_expense_web(self):
@@ -38,7 +39,7 @@ class TestWeb:
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_date_items).last, "2025-05-20")
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, "food")
 
-
+    #2
     EXPENSES_DATA_PATH = r"data\ddt\expenses_data.csv"
     @allure.title("Create multiple expenses via DDT")
     @allure.description("This test uses Data-Driven Testing to add several expenses, reading from an external CSV file")
@@ -57,6 +58,7 @@ class TestWeb:
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_date_items).last, expense_data["date"])
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_category_items).last, expense_data["category"].lower()) # <-- שים לב לאותיות קטנות!
     
+    #3
     @allure.title("Verify expense list count")
     @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
     def test03_verify_expense_list_count(self):
@@ -71,7 +73,7 @@ class TestWeb:
         WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), expected_new_count)
         print(f"Verified new count is exactly: {expected_new_count}")
 
-
+    #4
     @allure.title("Verify expense creation with real-time API conversion")
     @allure.description("Fetches real-time USD to ILS conversion rate via API, calculates the expense, and adds it via UI")
     def test04_verify_expense_with_api_rate(self):
@@ -96,7 +98,7 @@ class TestWeb:
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, description)
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_amount_items).last, str(calculated_ils))
 
-
+    #5
     @allure.title("Verify creation of expense with negative amount is prevented")
     @allure.description("Negative test: Tries to add an expense with a negative amount (-50) and verifies it fails or isn't added")
     def test05_negative_amount_validation(self):
@@ -104,7 +106,7 @@ class TestWeb:
         WebWorkflows.create_expense(page, description="Negative Test", amount=-50)
         WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), initial_count)
 
-    
+    #6
     @allure.title("Verify deletion of an expense")
     @allure.description("Adds a temporary expense, clicks its delete button, and verifies it is removed from the list")
     def test06_delete_expense(self):
@@ -118,7 +120,7 @@ class TestWeb:
         print(f"Count after delete verified as: {expected_count_after}")
 
 
-
+    #7
     @allure.title("Verify creation of expense with a very long description")
     @allure.description("Boundary test: Adds an expense with a 100-character description to ensure the UI handles it correctly")
     def test07_long_description_boundary(self):
@@ -127,7 +129,7 @@ class TestWeb:
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, long_text)
         WebVerify.verify_no_container_overflow(page.locator(ExpenseTrackerPage.expense_name_items).last)
 
-
+    #8
     @allure.title("Verify data persistence after page reload")
     @allure.description("Adds an expense, reloads the page, and verifies the expense is still displayed (checks LocalStorage)")
     def test08_data_persistence_on_reload(self):
@@ -136,7 +138,7 @@ class TestWeb:
         page.reload()
         WebVerify.contain_text(page.locator(ExpenseTrackerPage.expense_name_items).last, unique_desc)
 
-
+    #9
     @allure.title("Verify creation of expense with empty amount is prevented")
     @allure.description("Negative test: Tries to add an expense without entering an amount and verifies it isn't added")
     def test09_empty_amount_validation(self):
@@ -144,27 +146,28 @@ class TestWeb:
         WebWorkflows.create_expense(page, description="Empty Amount Test", amount="")
         WebVerify.verify_element_count(page.locator(ExpenseTrackerPage.expense_name_items), initial_count)
 
+    #10
     @allure.title("AI Failure Analysis Test")
     @allure.description("Intentionally fails to demonstrate REAL AI error analysis using Groq/Llama3")
     def test10_ai_failure_analysis(self):
         try:
-            # מנסים לחפש כפתור שלא קיים
+            # looking for a non-existent element to trigger an error
             page.locator("#non-existent-button").click(timeout=2000)
             
         except Exception as e:
             error_str = str(e)
-            print("\n⏳ Sending error to Groq AI for analysis... please wait...")
+            print("\n Sending error to Groq AI for analysis... please wait...")
             
-            # שליחה ל-AI
+            #  sending the error message to AI 
             ai_explanation = get_ai_error_analysis(error_str)
             
-            # הדפסה לטרמינל
+            # printing the AI analysis in a clear format
             print("=========================================")
             print(ai_explanation)
             print("=========================================")
             
-            # צירוף לדוח Allure
+            #Allure
             allure.attach(ai_explanation, name="Groq AI Failure Analysis", attachment_type=allure.attachment_type.TEXT)
             
-            # הכשלת הטסט כדי שיופיע כאדום בדוח
+            # 
             raise e

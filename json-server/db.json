@@ -11,6 +11,20 @@
       "description": "Food",
       "amount": 190,
       "currency": "ILS"
+    },
+    {
+      "id": "a979",
+      "description": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Other"
+    },
+    {
+      "id": "2474",
+      "description": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Other"
     }
   ]
 }
