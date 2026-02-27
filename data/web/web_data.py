@@ -1,0 +1,1 @@
+EXPENSES_DATA_PATH = r"data\ddt\expenses_data.csv"

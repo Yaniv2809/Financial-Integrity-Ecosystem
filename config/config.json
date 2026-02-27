@@ -5,7 +5,7 @@
         "qa": {
             "web_url": "https://atidcollege.co.il/Xamples/expense-tracker/",
             "api_url": "http://localhost:3000/expenses",
-            "currency_api_url": "https://api.exchangerate-api.com/v4/latest/USD",
+            "currency_api_url": "https://open.er-api.com/v6/latest/USD",
             "json_server_command": "json-server --watch db.json --port 3000"
         }
     },
