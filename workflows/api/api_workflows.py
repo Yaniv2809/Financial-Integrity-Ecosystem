@@ -1,19 +1,20 @@
 import allure
 from extensions.api_actions import APIActions
 
-BASE_URL = "http://localhost:3000/expenses"
+# הגדרת הכתובת באופן ישיר ובטוח
+API_URL = "http://localhost:3000/expenses"
 
 class APIWorkflows:
 
     @staticmethod
     @allure.step("⚙️ Workflow: Get All Expenses")
     def get_all_expenses():
-        return APIActions.get(BASE_URL)
+        return APIActions.get(API_URL)
 
     @staticmethod
     @allure.step("⚙️ Workflow: Get Expense by ID: {expense_id}")
     def get_expense_by_id(expense_id):
-        return APIActions.get(f"{BASE_URL}/{expense_id}")
+        return APIActions.get(f"{API_URL}/{expense_id}")
 
     @staticmethod
     @allure.step("⚙️ Workflow: Create New Expense")
@@ -24,7 +25,7 @@ class APIWorkflows:
             "date": date,
             "category": category
         }
-        return APIActions.post(BASE_URL, payload)
+        return APIActions.post(API_URL, payload)
 
     @staticmethod
     @allure.step("⚙️ Workflow: Update Expense ID: {expense_id}")
@@ -35,9 +36,9 @@ class APIWorkflows:
             "date": date,
             "category": category
         }
-        return APIActions.put(f"{BASE_URL}/{expense_id}", payload)
+        return APIActions.put(f"{API_URL}/{expense_id}", payload)
 
     @staticmethod
     @allure.step("⚙️ Workflow: Delete Expense ID: {expense_id}")
     def delete_expense(expense_id):
-        return APIActions.delete(f"{BASE_URL}/{expense_id}")
+        return APIActions.delete(f"{API_URL}/{expense_id}")

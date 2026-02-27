@@ -1,6 +1,7 @@
 import allure
 from utils.logger import Logger
 
+
 class UIActions:
     """
     מחלקה זו עוטפת את כל הפעולות הטכניות של הדפדפן (UI).

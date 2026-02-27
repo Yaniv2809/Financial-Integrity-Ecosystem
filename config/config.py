@@ -2,7 +2,7 @@ import json
 import os
 
 class ConfigManager:
-    CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
+    CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
     @staticmethod
     def get_config():

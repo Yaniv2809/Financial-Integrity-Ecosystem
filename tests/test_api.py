@@ -1,7 +1,6 @@
 import pytest
 import allure
 import os
-import requests
 from utils.common_ops import read_data_from_csv
 from config.config import ConfigManager
 from workflows.api.api_workflows import APIWorkflows
@@ -22,8 +21,6 @@ class TestAPI:
 
     @pytest.fixture(scope="class", autouse=True)
     def setup(self):
-        
-        
         print("\n[SETUP] Initializing API Tests and DB infrastructure...")
         # 1.for API_04
         DBActions.execute_query(DB_PATH, "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, expense_name TEXT, amount REAL, date TEXT, category TEXT)")
@@ -77,7 +74,7 @@ class TestAPI:
         records = DBActions.execute_query(DB_PATH, query)
         
         # נוודא שחזרה לנו שורה אחת לפחות (כדי למנוע שגיאות אינדקס)
-        assert len(records) > 0, "❌ Data was not saved in DB!"
+        assert len(records) > 0, " Data was not saved in DB!"
         DBVerifications.verify_record_count(records, 1)
 
     @allure.title("API_05: Get Single Expense by ID")
@@ -116,7 +113,7 @@ class TestAPI:
     @allure.title("API_10: Negative - Bad Route / Endpoint")
     @allure.description("ניסיון לגשת לכתובת API שלא קיימת ואימות שגיאה מתאימה.")
     def test10_negative_bad_route(self):
-        # שליחת בקשה לנתיב "expenses_fake" במקום "expenses"
         from extensions.api_actions import APIActions
-        response = APIActions.get(ConfigManager.get("api_base_url").replace("expenses", "expenses_fake"))
+        # שליחת בקשה לנתיב שגוי בכוונה (expenses_fake) בלי תלות ב-Config
+        response = APIActions.get("http://localhost:3000/expenses_fake")
         APIVerifications.verify_status_code(response, 404)

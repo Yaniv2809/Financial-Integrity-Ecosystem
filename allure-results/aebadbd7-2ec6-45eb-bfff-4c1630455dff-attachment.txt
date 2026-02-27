@@ -1,8 +1,0 @@
-INFO     AutomationLogger:logger.py:41 ====== SETUP: Starting Test Execution ======
-INFO     AutomationLogger:logger.py:41 API Action: Sending POST request to http://localhost:3000/expenses with payload: {'description': 'Food', 'amount': 190.0, 'currency': 'ILS'}
-INFO     AutomationLogger:logger.py:41 API Action: Received response with status code 201
-INFO     AutomationLogger:logger.py:41 Verification Passed: 201 equals 201
-INFO     AutomationLogger:logger.py:41 Verification Passed: Food equals Food
-INFO     AutomationLogger:logger.py:41 Verification Passed: 190 equals 190
-INFO     AutomationLogger:logger.py:41 Verification Passed: 'id' is found in '{'id': '32a9', 'description': 'Food', 'amount': 190, 'currency': 'ILS'}'
-INFO     AutomationLogger:logger.py:41 ====== TEARDOWN: Test Execution Completed ======

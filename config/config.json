@@ -1,6 +1,16 @@
 {
- "BROWSER_TYPE":"CHROME",
-    "HEADLESS":false,
-    "SLOW_MO":500,
-    "DEFAULT_COMMAND_TIMEOUT" : 10000 
-  }
+    "env": "qa",
+    "active_env": "qa",
+    "environments": {
+        "qa": {
+            "web_url": "https://atidcollege.co.il/Xamples/expense-tracker/",
+            "api_url": "http://localhost:3000/expenses",
+            "currency_api_url": "https://api.exchangerate-api.com/v4/latest/USD",
+            "json_server_command": "json-server --watch db.json --port 3000"
+        }
+    },
+    "db_path": "data/expense_db.db",
+    "browser": "chromium",
+    "headless": false,
+    "timeout": 5000
+}
