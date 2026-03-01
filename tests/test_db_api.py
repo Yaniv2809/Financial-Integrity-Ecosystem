@@ -15,7 +15,7 @@ DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_db.db")
 class TestDBAPI:
 
     @allure.title("API: DB Validation - Verify API in DB")
-    @allure.description("יצירת הוצאה דרך ה-API, ואימות שהשורה נוספה לטבלת ה-SQLite.")
+    @allure.description("Creates an expense via API and verifies it exists in the SQLite database.")
     def test01_verify_api_in_db(self):
         # 1. יצירה ב-API
         response = APIWorkflows.create_expense("API_to_DB_Test", 999, "2025-05-05", "Other")
@@ -27,13 +27,13 @@ class TestDBAPI:
         insert_query = "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)"
         DBActions.execute_query(DB_PATH, insert_query, ("API_to_DB_Test", 999.0, "2025-05-05", "Food"))
         
-        # 3.
+        # 3.query from DB to verify the record exists
         query = "SELECT * FROM expenses WHERE expense_name = 'API_to_DB_Test'"
         records = DBActions.execute_query(DB_PATH, query)
         
-        # נוודא שחזרה לנו שורה אחת לפחות (כדי למנוע שגיאות אינדקס)
+        # verify the record exists in DB
         assert len(records) > 0, " Data was not saved in DB!"
         DBVerifications.verify_record_count(records, 1)
         
-        # 4. מחיקת הנתון מה-API כדי להשאיר סביבה נקייה
+        # 4. cleanup - delete the created record from DB and API
         APIWorkflows.delete_expense(created_id)

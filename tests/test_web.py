@@ -32,7 +32,6 @@ class TestWeb:
         WebVerify.contain_text(self.page.locator(ExpenseTrackerPage.expense_category_items).last, "food")
 
     #2
-    
     @allure.title("Create multiple expenses via DDT")
     @allure.description("This test uses Data-Driven Testing to add several expenses, reading from an external CSV file")
     @pytest.mark.parametrize("expense_data", read_data_from_csv(EXPENSES_DATA_PATH))
@@ -162,5 +161,5 @@ class TestWeb:
             #Allure
             allure.attach(ai_explanation, name="Groq AI Failure Analysis", attachment_type=allure.attachment_type.TEXT)
             
-            # 
+            # re-raise the original exception to ensure the test is marked as failed
             raise e
