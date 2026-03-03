@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Reports (don't copy old reports into image)
+reports/
+allure-results/
+allure-report/
+
+# Logs
+logs/*.log
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Node
+node_modules/
+
+# Database (don't copy DB, create fresh)
+data/*.db
+
+# Other
+*.md
+LICENSE

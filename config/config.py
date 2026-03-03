@@ -20,3 +20,8 @@ class ConfigManager:
         active_env = config.get("active_env")
 
         return config.get("environments").get(active_env)
+    
+    @staticmethod
+    def get_performance_config():
+        config = ConfigManager.get_config()
+        return config.get("performance")
