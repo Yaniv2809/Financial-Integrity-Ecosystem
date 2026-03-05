@@ -1,3 +1,6 @@
+
+
+
 class ExpenseTrackerPage:
     """
     Page Object Model (POM) עבור דף ניהול ההוצאות ב-Web.
@@ -17,3 +20,23 @@ class ExpenseTrackerPage:
     expense_amount_items = ".expense-amount"      # סכומי ההוצאות ברשימה
     expense_date_items = ".expense-date"          # תאריכי ההוצאות ברשימה
     expense_category_items = ".expense-category"  # קטגוריות ההוצאות ברשימה
+
+
+
+    @staticmethod
+    def get_last_expense_name(page):
+        return page.locator(ExpenseTrackerPage.expense_name_items).last
+    
+    @staticmethod
+    def get_last_expense_elements(page):
+        """
+        תופס את הרשומה האחרונה ברשימה, ומחזיר מילון של כל הלוקייטורים בתוכה.
+        """
+        last_item = page.locator("#expense-list li").last
+
+        return {
+            "name": last_item.locator(".expense-name"),
+            "amount": last_item.locator(".expense-amount"),
+            "date": last_item.locator(".expense-date"),
+            "category": last_item.locator(".expense-category"),
+        }

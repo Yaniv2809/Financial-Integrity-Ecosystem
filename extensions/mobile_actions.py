@@ -1,12 +1,47 @@
 import time
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.common.exceptions import NoSuchElementException
+from page_objects.mobile.expense_mobile_page import MobileExpensePage
 
 
-class MobileActions:
+class MobileActions(MobileExpensePage):
 
     def __init__(self, driver):
         self.driver = driver
+
+
+    def add_full_expense(self, name, amount,category=None):
+        """function that adds an expense with all details (name, amount, date, category)"""
+        # שם הוצאה
+        self.expense_name_field.click()
+        self.expense_name_field.clear()
+        self.expense_name_field.send_keys(name)
+
+        # סכום
+        self.amount_field.click()
+        self.driver.execute_script('mobile: type', {'text': str(amount)})
+
+        # תאריך
+        # תאריך - לחיצה על DatePicker ואישור עם "הגדר"
+        self.date_picker.click()
+        import time
+        time.sleep(1)
+        ok_btn = self.driver.find_element(
+            AppiumBy.ANDROID_UIAUTOMATOR,
+            'new UiSelector().text("הגדר")')
+        ok_btn.click()
+       
+
+        # קטגוריה
+        if category:
+            self.category_dropdown.click()
+            option = self.driver.find_element(
+                AppiumBy.ANDROID_UIAUTOMATOR,
+                f'new UiSelector().text("{category}")')
+            option.click()
+
+        # לחיצה על כפתור הוספה
+        self.add_expense_button.click()
 
     # ── Find ────────────────────────────────────────────────────────────
     def find_by_text(self, text):
@@ -78,3 +113,5 @@ class MobileActions:
         import os
         os.makedirs("logs/screenshots", exist_ok=True)
         self.driver.save_screenshot(f"logs/screenshots/{name}.png")
+
+

@@ -1,0 +1,86 @@
+import allure
+from extensions.ui_actions import UIActions
+from page_objects.web.expense_tracker_page import ExpenseTrackerPage
+
+class WebWorkflows:
+
+    @staticmethod
+    @allure.step("Create a new expense in Web workflow")
+    def create_expense(page, description, amount, category="Food", date="2023-10-15"):
+        """
+        מזין תיאור, סכום, קטגוריה ותאריך, ולוחץ על 'הוסף'.
+        """
+        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+        UIActions.fill_text(page, ExpenseTrackerPage.txt_amount, str(amount))
+        UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)
+        UIActions.fill_text(page, ExpenseTrackerPage.add_date, date)
+        UIActions.click(page, ExpenseTrackerPage.btn_add)
+
+
+    @staticmethod
+    @allure.step("Fill expense form and catch expected alert")
+    def validate_expense_and_alert(page, description, amount, category="Food", date="2023-10-15"):
+        # 1. יצרנו מילון ריק לאיסוף הנתונים
+        alert_received = {"appeared": False, "text": ""}
+
+        # 2. פונקציית הקולבק
+        def on_dialog(dialog):
+            alert_received["appeared"] = True
+            alert_received["text"] = dialog.message
+            dialog.accept()
+        # 3. מחברים את המאזין
+        page.once("dialog", on_dialog)
+        # 4. ממלאים את הרשומה
+        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+        amount_locator = page.locator(ExpenseTrackerPage.txt_amount)
+        amount_locator.click()
+        amount_locator.press_sequentially(str(amount), delay=50)
+        UIActions.fill_text(page, ExpenseTrackerPage.add_date, date)
+        UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)       
+        # 5. לחיצה על כפתור ההוספה (הטריגר של האלרט)
+        UIActions.click(page, ExpenseTrackerPage.btn_add)
+        # מחכים חצי שנייה כדי לתת לאלרט הזדמנות לקפוץ
+        page.wait_for_timeout(500)
+        # 6. התיקון הקריטי: מסירים את המאזין כדי שלא "ילכלך" טסטים הבאים!
+        page.remove_listener("dialog", on_dialog)
+        return alert_received
+    
+
+
+    @staticmethod
+    @allure.step("Validate Boundary Expense - status: {expected_status}")
+    def validate_boundary_expense(page, description, amount, date, category, expected_status):
+        """
+        מבצע ניסיון הוספת הוצאה ומחזיר את התוצאות לאימות.
+        מטפל ב-Alert אם צפוי כישלון, ובהכפלת טקסט ארוך.
+        """
+        # הכפלת טקסט ארוך לבדיקת boundary
+        if len(description) > 20 and set(description) == {"A"}:
+            description = "A" * 200
+
+        # ספירת שורות לפני
+        initial_count = page.locator(ExpenseTrackerPage.expense_name_items).count()
+
+        # טיפול ב-Alert אם צפוי כישלון
+        alert_received = {"appeared": False, "text": ""}
+        if expected_status == "failure":
+            def on_dialog(dialog):
+                alert_received["appeared"] = True
+                alert_received["text"] = dialog.message
+                dialog.accept()
+            page.once("dialog", on_dialog)
+
+        # יצירת ההוצאה
+        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+        UIActions.fill_text(page, ExpenseTrackerPage.txt_amount, str(amount))
+        UIActions.fill_text(page, ExpenseTrackerPage.add_date, date)
+        UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)
+        UIActions.click(page, ExpenseTrackerPage.btn_add)
+        page.wait_for_timeout(500)
+
+        return {
+            "description": description,
+            "initial_count": initial_count,
+            "alert": alert_received
+        }
+ 

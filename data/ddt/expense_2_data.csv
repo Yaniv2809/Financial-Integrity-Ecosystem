@@ -1,0 +1,4 @@
+description,amount,category,date,status
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,100,Fashion,2024-01-01,failure
+"",50,Transportation,2024-01-01,failure
+"   ",300,Education,2024-01-01,failure

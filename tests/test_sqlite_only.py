@@ -1,9 +1,12 @@
 import pytest
 import allure
+import os
 from extensions.db_actions import DBActions
 from extensions.db_verifications import DBVerifications
 
-DB_PATH = r"C:\Users\yaniv\Desktop\Financial-Integrity-Ecosystem\data\expense_db.db"
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(PROJECT_ROOT, "data", "expenses_db.db")
 
 #this test class is for checking that our DB actions and verifications work correctly in isolation, without involving the web UI. 
 #It's a sanity check for our DB layer before we integrate it with the web tests.

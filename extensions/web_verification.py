@@ -36,6 +36,22 @@ class WebVerify:
         expect(element).to_have_count(count)
 
     @staticmethod
+    @allure.step("Verify no new rows were added (expected: {expected_count})")
+    def verify_no_row_added(element: Locator, expected_count: int, alert_text: str = None):
+        """
+        Verifies that no new row was added to the list.
+        Prints actual vs expected count and the expected alert message.
+        """
+        actual_count = element.count()
+        print(f"\n[VERIFY] Rows actual: {actual_count} | Rows expected: {expected_count}")
+        if alert_text:
+            print(f"[VERIFY] Expected alert was: '{alert_text}'")
+        assert actual_count == expected_count, (
+            f"BUG: Row was added despite invalid input! "
+            f"Expected {expected_count} rows, got {actual_count}"
+        )
+
+    @staticmethod
     @allure.step("Verify that the element contains the expected text")
     def contain_text(element: Locator, expected_text: str):
         expect(element).to_contain_text(expected_text)
@@ -100,3 +116,13 @@ class WebVerify:
             "}"
         )
         assert not is_overflowing, "UI Bug: The text overflows its parent container (the card)!"
+
+    @staticmethod
+    @allure.step("Soft Verify condition is True")
+    def soft_is_true(condition: bool, message: str = "Condition expected to be True but was False"):
+        soft_assert(condition is True, message)
+
+    @staticmethod
+    @allure.step("Soft Verify Strings are equal")
+    def soft_strings_are_equal(actual: str, expected: str, message=None):
+        soft_assert(actual == expected, message)

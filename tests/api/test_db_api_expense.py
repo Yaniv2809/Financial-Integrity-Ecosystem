@@ -1,7 +1,7 @@
 import allure
 import os
 import pytest
-from workflows.api.api_workflows import APIWorkflows
+from workflows.api.api_workflows_expense import APIWorkflows
 from extensions.api_verification import APIVerifications
 from extensions.db_actions import DBActions
 from extensions.db_verifications import DBVerifications

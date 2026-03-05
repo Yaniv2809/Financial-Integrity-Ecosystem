@@ -2,6 +2,25 @@ import csv
 import json
 
 def read_data_from_csv(file_path):
+    """
+    Read data from CSV or JSON files and return as list of tuples for pytest parametrize.
+    For JSON files, returns list of tuples from the JSON array objects.
+    """
+    # Check if it's a JSON file
+    if file_path.endswith('.json'):
+        with open(file_path, 'r', encoding='utf-8') as jsonfile:
+            json_data = json.load(jsonfile)
+            data = []
+            if isinstance(json_data, list) and len(json_data) > 0:
+                # Get keys from the first object to maintain order
+                keys = list(json_data[0].keys())
+                for item in json_data:
+                    # Create tuple from values in the order of keys
+                    values = tuple(item.get(key, '') for key in keys)
+                    data.append(values)
+            return data
+    
+    # Otherwise treat as CSV
     data = []
     with open(file_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)

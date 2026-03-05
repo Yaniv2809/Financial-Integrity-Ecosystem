@@ -1,4 +1,5 @@
 import allure
+from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from utils.logger import Logger
 
 
@@ -46,3 +47,5 @@ class UIActions:
         log.info(f"UI Action: Selecting '{option}' in dropdown with selector: '{selector}'")
         # פקודה מיוחדת של Playwright לבחירה מתוך תפריט נפתח לפי הערך שלו
         page.locator(selector).select_option(label=option)
+
+    

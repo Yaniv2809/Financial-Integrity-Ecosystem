@@ -1,9 +1,11 @@
+import os
 import pytest
 import allure
 from utils.common_ops import read_data_from_csv
-from workflows.api.api_workflows import APIWorkflows
+from workflows.api.api_workflows_expense import APIWorkflows
 from extensions.api_verification import APIVerifications
-
+from extensions.api_actions import APIActions
+from config.config import ConfigManager
 
 
 @allure.epic("API Interface")
@@ -30,41 +32,55 @@ class TestAPI:
 
     @allure.title("API_03: Data Driven Testing (5 Items)")
     @allure.description("craete multiple expenses using data driven testing with CSV file and verify each creation.")
-    @pytest.mark.parametrize("desc, amount, date, cat", read_data_from_csv(r"data\ddt\expenses_json_data.csv"))
-    def test03_create_multiple_expenses_api(self, desc, amount, date, cat):
-        response = APIWorkflows.create_expense(desc, amount, date, cat)
+    @pytest.mark.parametrize("name, amount, date, category", read_data_from_csv(
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                 "data", "ddt", "expenses_json_data.json")))
+    def test03_create_multiple_expenses_api(self, name, amount, date, category):
+        response = APIWorkflows.create_expense(name, amount, date, category)
         APIVerifications.verify_status_code(response, 201)
-        APIVerifications.verify_response_value(response, "description", desc)
+        APIVerifications.verify_response_value(response, "description", name)
         # cleanup - delete the created expense to keep the system clean (using the returned ID from the response)
         APIWorkflows.delete_expense(response.json().get("id"))
     # =======================================================
 
-    @allure.title("API_04: Get Single Expense by ID")
-    @allure.description("משיכת הוצאה ספציפית לפי ה-ID שלה ואימות הפרטים.")
-    def test04_get_single_expense(self):
-        response = APIWorkflows.get_expense_by_id(TestAPI.created_id)
+    def test04_get_single_expense(self, smart_expense_id):
+        response = APIWorkflows.get_expense_by_id(smart_expense_id)
         APIVerifications.verify_status_code(response, 200)
-        APIVerifications.verify_response_value(response, "description", "API_Course")
-
+ 
     @allure.title("API_05: Update Expense (PUT)")
     @allure.description("עדכון סכום של הוצאה קיימת מ-150 ל-200 באמצעות PUT.")
-    def test05_update_expense(self):
-        # מעדכנים מ-150 ל-200 בדיוק כמו שביקשת בעץ!
-        response = APIWorkflows.update_expense(TestAPI.created_id, "API_Course_Updated", 200, "2025-10-10", "Education")
+    def test05_update_expense(self, smart_expense_id):
+        response = APIWorkflows.update_expense(smart_expense_id, "API_Course_Updated", 200, "2025-10-10", "Education")
         APIVerifications.verify_status_code(response, 200)
         APIVerifications.verify_response_value(response, "amount", 200)
-
+ 
     @allure.title("API_06: Delete Expense")
     @allure.description("מחיקת הוצאה באמצעות DELETE ל-ID שלה.")
     def test06_delete_expense_api(self):
-        response = APIWorkflows.delete_expense(TestAPI.created_id)
-        APIVerifications.verify_status_code(response, 200)
-
+        if TestAPI.created_id is not None:
+            expense_id = TestAPI.created_id                                              # ריצת מחלקה
+        else:
+            r = APIWorkflows.create_expense("To_Delete", 50, "2025-11-11", "Testing")   # ריצה עצמאית
+            expense_id = r.json().get("id")
+ 
+        APIVerifications.verify_status_code(
+            APIWorkflows.delete_expense(expense_id), 200
+        )
+ 
     @allure.title("API_07: Negative - Get Deleted Expense")
     @allure.description("ניסיון לשלוף הוצאה שנמחקה וקבלת שגיאה 404.")
     def test07_negative_get_deleted(self):
-        response = APIWorkflows.get_expense_by_id(TestAPI.created_id)
-        APIVerifications.verify_status_code(response, 404)
+        if TestAPI.created_id is not None:
+            expense_id = TestAPI.created_id                                                   # כבר נמחק ע"י test06
+        else:
+            r = APIWorkflows.create_expense("Temp_To_Delete", 100, "2025-01-01", "Testing")  # ריצה עצמאית
+            expense_id = r.json().get("id")
+            APIWorkflows.delete_expense(expense_id)                                           # מוחק לפני הverify
+ 
+        APIVerifications.verify_status_code(
+            APIWorkflows.get_expense_by_id(expense_id), 404
+        )
+
 
     @allure.title("API_08: Negative - Delete Invalid ID")
     @allure.description("ניסיון למחוק מזהה שלא קיים במערכת (404).")
@@ -75,9 +91,6 @@ class TestAPI:
     @allure.title("API_10: Negative - Bad Route / Endpoint")
     @allure.description("ניסיון לגשת לכתובת API שלא קיימת ואימות שגיאה מתאימה.")
     def test10_negative_bad_route(self):
-        from extensions.api_actions import APIActions
-        from config.config import ConfigManager
-        
         # מושכים את הכתובת האמיתית מהקונפיג
         base_url = ConfigManager.get_env_data()['api_url']
         

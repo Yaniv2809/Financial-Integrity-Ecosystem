@@ -95,6 +95,13 @@
       "amount": 999,
       "date": "2025-05-05",
       "category": "Other"
+    },
+    {
+      "description": "API_Course_Updated",
+      "amount": 200,
+      "date": "2025-10-10",
+      "category": "Education",
+      "id": "836a"
     }
   ]
 }

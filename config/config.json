@@ -7,7 +7,8 @@
             "api_url": "http://localhost:3000/expenses",
             "mobile_apk_path": "C:\\Users\\yaniv\\Downloads\\atid-expense-travel (1).apk",
             "currency_api_url": "https://open.er-api.com/v6/latest/USD",
-            "json_server_command": "json-server --watch db.json --port 3000"
+            "json_server_command": "json-server --watch db.json --port 3000",
+            "android_sdk_path": "C:\\Users\\yaniv\\AppData\\Local\\Android\\Sdk"
         }
     },
     "db_path": "data/expense_db.db",
@@ -15,10 +16,9 @@
     "headless": false,
     "timeout": 5000,
     "long_timeout": 10000,
-
     "performance": {
-    "max_avg_creation_time": 2.0,
-    "max_p95_time": 3.0,
-    "max_degradation_pct": 50
-}
+        "max_avg_creation_time": 2.0,
+        "max_p95_time": 3.0,
+        "max_degradation_pct": 50
+    }
 }
