@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 config/config.json
-json-server
+json-server/
 
 
 # C extensions
