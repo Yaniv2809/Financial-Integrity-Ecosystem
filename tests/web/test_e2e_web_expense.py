@@ -1,7 +1,7 @@
 import allure
 import pytest
 import time
-from workflows.web.web_workflows import WebWorkflows
+from workflows.web.web_workflows_expense import WebWorkflows
 from extensions.web_verification import WebVerify
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from utils.logger import Logger

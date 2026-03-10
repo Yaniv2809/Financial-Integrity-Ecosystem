@@ -15,26 +15,33 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_db.db")
 SCREENSHOTS_DIR = os.path.join(PROJECT_ROOT, "reports", "screenshots")
 TRACES_DIR = os.path.join(PROJECT_ROOT, "reports", "traces")
+LOGS_DIR = os.path.join(PROJECT_ROOT, "reports", "logs")
 
 # יצירת תיקיות דוחות אם לא קיימות
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 os.makedirs(TRACES_DIR, exist_ok=True)
-
-
-# ==========================================
-# 0. General - Setup/Teardown + Logging
-# ==========================================
-# @pytest.fixture(scope="function", autouse=True)
-# def setup_teardown():
-#     log = Logger()
-#     log.info("====== SETUP: Starting Test Execution ======")
-#     yield
-#     log.info("====== TEARDOWN: Test Execution Completed ======")
+os.makedirs(LOGS_DIR, exist_ok=True)
 
 
 # ==========================================
 # 1. DB Fixtures - Session scope
 # ==========================================
+
+@pytest.fixture(scope="function")
+def inject_web_course_record():
+    """מזריק רשומת Web_Course ל-DB לטסטי DB→Web integration"""
+    db_path = ConfigManager.get_db_path()
+    
+    print("\n[SETUP] Injecting 'Web_Course' record into DB...")
+    DBActions.execute_query(db_path, "DELETE FROM expenses WHERE expense_name = 'Web_Course'")
+    
+    insert_query = "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)"
+    DBActions.execute_query(db_path, insert_query, ("Web_Course", 1500.0, "2026-02-25", "Education"))
+    
+    yield
+    
+    print("\n[TEARDOWN] Keeping DB record for inspection.")
+
 @pytest.fixture(scope="session")
 def db_setup_teardown():
     """
@@ -89,34 +96,29 @@ def web_setup(request, playwright: Playwright):
 def trace_manager(request):
     """ מנהל את ה-Tracing פר טסט כדי שלא יעצור לשאר המחלקה """
     if hasattr(request.cls, "context") and request.cls.context is not None:
-        # מתחילים הקלטה לטסט הנוכחי
+        request.cls._trace_saved = False  # דגל: האם ה-Hook כבר שמר את ה-trace?
         request.cls.context.tracing.start(screenshots=True, snapshots=True)
-        
-    yield # כאן הטסט רץ 
-    
-    # ה-Hook של הכישלון ישמור את הקובץ אם נכשל, אבל כאן נוודא שההקלטה נעצרת בכל מקרה
-    # כדי שהטסט הבא יוכל להתחיל הקלטה נקייה.
+
+    yield  # כאן הטסט רץ
+
+    # עוצרים רק אם ה-Hook לא כבר עצר ושמר (בנפילה) - מונע double-stop
     if hasattr(request.cls, "context") and request.cls.context is not None:
-        try:
-            # עוצרים בלי לשמור (השמירה קורית ב-Hook אם יש כישלון)
-            request.cls.context.tracing.stop() 
-        except Exception as e:
-            # תופס רק שגיאות קוד אמיתיות ולא חוסם עצירת מערכת (כמו Ctrl+C)
-            print(f"[TRACE CLEANUP WARNING] Could not stop tracing: {e}")
+        if not getattr(request.cls, "_trace_saved", False):
+            request.cls.context.tracing.stop()  # הטסט עבר - עוצרים ללא שמירה
 
 
 # ==========================================
 # 3. API Fixtures - Function scope
 # ==========================================
-# @pytest.fixture(scope="function")
-# def api_setup():
-#     """
-#     פיקסטור לטסטים של API.
-#     ה-URL מוגדר ב-Workflows, כאן ניתן להוסיף Token/Auth בעתיד.
-#     """
-#     print("\n[SETUP] Preparing API Environment...")
-#     yield
-#     print("\n[TEARDOWN] API Test Completed.")
+@pytest.fixture(scope="function")
+def api_setup():
+    """
+    פיקסטור לטסטים של API.
+    ה-URL מוגדר ב-Workflows, כאן ניתן להוסיף Token/Auth בעתיד.
+    """
+    print("\n[SETUP] Preparing API Environment...")
+    yield
+    print("\n[TEARDOWN] API Test Completed.")
 
 @pytest.fixture(scope="function")
 def api_cleanup():
@@ -220,11 +222,12 @@ def pytest_runtest_makereport(item, call):
             if hasattr(item.cls, "context") and item.cls.context is not None:
                 try:
                     item.cls.context.tracing.stop(path=os.path.join(TRACES_DIR, f"{filename}.zip"))
+                    item.cls._trace_saved = True  # מסמן ל-trace_manager לא לעצור שוב
                     print(f"[FAILURE] Trace saved: {filename}.zip")
                 except Exception as e:
                     print(f"[WARNING] Failed to save trace: {e}")
 
-        # 2. Mobile screenshot (הקוד המקורי שלך)
+        # 2. Mobile screenshot
         elif hasattr(item.cls, "driver") and item.cls.driver is not None:
             try:
                 driver = item.cls.driver
@@ -232,6 +235,19 @@ def pytest_runtest_makereport(item, call):
                 print(f"\n[FAILURE] Mobile screenshot saved: {filename}_mobile.png")
             except Exception as e:
                 print(f"\n[WARNING] Failed to capture mobile screenshot: {e}")
+
+        # 3. API / DB → Failure Log (txt עם Traceback מלא)
+        else:
+            try:
+                log_path = os.path.join(LOGS_DIR, f"{filename}_failure.txt")
+                with open(log_path, "w", encoding="utf-8") as f:
+                    f.write(f"Test   : {item.nodeid}\n")
+                    f.write(f"Time   : {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write("=" * 60 + "\n")
+                    f.write(str(report.longrepr))
+                print(f"[FAILURE] Failure log saved: {filename}_failure.txt")
+            except Exception as e:
+                print(f"[WARNING] Failed to save failure log: {e}")
 
         # ==========================================
         # 3. AI 🤖

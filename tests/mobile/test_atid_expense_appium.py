@@ -1,34 +1,32 @@
-import pytest
 import time
-import os
+
+from extensions.mobile_verifications import MobileVerifications
+from page_objects.mobile.atid_expense_appium_page import AtidExpenseAppiumPage
+from tests.mobile.test_appium_execution import DATA_FILE_PATH
+from utils.common_ops import load_test_data
+from workflows.mobile.mobile_workflows_expense import AtidExpenseAppiumFlows
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
-
-from page_objects.mobile.expense_mobile_page import MobileExpensePage
-from utils.common_ops import load_test_data
-
-# נתיב דינמי לקובץ ה-JSON
-DATA_FILE_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "data", "ddt", "expenses_json_data.json"
-)
+import allure
+import pytest
+from selenium.webdriver.common.by import By
 
 
 @pytest.mark.usefixtures("mobile_driver")
-class TestMobileExpenseTracker:
+class TestAtidExpenseAppium:
     """
     Mobile Test Suite - ATID Expense Tracker (WebView Hybrid)
     כולל: בדיקות UI, DDT, Full Flow, מקלדת, ועקביות נתונים.
     """
 
     @pytest.fixture(autouse=True)
-    def init_page(self):
-        self.page = MobileExpensePage(self.driver)
+    def _init_page(self):
+        self.page = AtidExpenseAppiumPage(self.driver)
 
-    # ──────────────────────────────────────────────
-    # Helpers
-    # ──────────────────────────────────────────────
+    
+      #helpers
+    
     def _add_expense(self, name: str, amount: str, day: str = None, category: str = None):
         """
         מוסיף הוצאה מלאה דרך ה-Page Object.
@@ -142,3 +140,54 @@ class TestMobileExpenseTracker:
         time.sleep(2)
 
         assert self._wait_for_row("hotel").is_displayed()
+
+
+    # @pytest.mark.usefixtures("mobile_driver")
+    @allure.title("Test 01 - Verify Expense Added")
+    def test01_verify_execution(self,atid_expense_appium_flows: AtidExpenseAppiumFlows):
+        atid_expense_appium_flows.add_expenses("meals", "100", "15", "Food")
+        MobileVerifications.visible(self.driver, (By.XPATH, "//*[@text='meals']"))
+        #מוודא שההוצאה אכן מופיעה במסך לאחר ההוספה.
+       #(assert):האלמנט עם הטקסט "meals" מוצג על המסך
+       # Santiy_ test – בדיקה בסיסית שהמערכת עובדת, שהוספת הוצאה עובדת.
+
+    def test02_positive_full_flow(self,atid_expense_appium_flows: AtidExpenseAppiumFlows):
+        atid_expense_appium_flows.add_expenses("train ticket", "100", "20", "Transportation")
+        MobileVerifications.visible(self.driver, (By.XPATH, "//*[@text='train ticket']"))
+        #מה הוא בדק: זרימה מלאה עם נתונים שונים (ערכי קצה/שונים). הוא מוודא שהמערכת יודעת להתמודד עם קטגוריות שונות (כמו Transportation) ותאריכים שונים.
+        #בדיקה שהטקסט "train ticket, כאן גם בודקים השדה מקבל כמה מילים  ולא מילה אחת 
+        #מוודא שהטקסט עם שם ההוצאה מופיע (למעשה בקוד יש bus ticket assert
+
+    def test03_ui_keyboard_interference(self,atid_expense_appium_flows: AtidExpenseAppiumFlows):
+        atid_expense_appium_flows.add_expenses("book", "200", "25", "Education")
+        MobileVerifications.visible(self.driver, (By.XPATH, "//*[@text='book']"))
+        #מה הוא בדק: יציבות ממשק משתמש,במובייל, כשמקלדת נפתחת, יכולה  להסתיר כפתורים ה
+        # הוידואי כאן הוא אימות שההוצאה נוספה אם הכפתור  הוספה  היה נסתר אז לא היתה אפשרות להוספה
+        #האלמנט עם שם ההוצאה "tutor" מופיע במסך.assert
+    @allure.title("Test 04 - Expense Persistence")
+    def test04_persistence(self,atid_expense_appium_flows:AtidExpenseAppiumFlows):
+
+        atid_expense_appium_flows.add_expenses("travel", "200", "10", "Accommodation")
+
+        atid_expense_appium_flows.send_app_to_background()
+
+        travel_locator = (By.XPATH, "//*[contains(@text,'travel')]")
+
+        MobileVerifications.visible(self.driver, travel_locator)
+
+        #שולח את האפליקציה לרקע (background) ומחזיר אותה לפוקוס
+        #מוודא שהנתונים נשמרו וההוצאה "travel" עדיין מופיעה.
+        #האלמנט "travel" עדיין מוצג במסך.assert
+        # Data Persistence– לוודא שהמערכת שומרת את 
+        # הנתונים גם אם האפליקציה יוצאת מהרקע או שהמשתמש מקבל שיחה וכו’.
+    def test05_delete_expense(self, atid_expense_appium_flows: AtidExpenseAppiumFlows):
+        expense_name = "Pizza"
+
+        # 1. הוספה (Flow)
+        atid_expense_appium_flows.add_expenses(expense_name, "50", "1", "Food")
+
+        # 2. מחיקה (Flow)
+        atid_expense_appium_flows.delete_expense_flow(expense_name)
+
+        # 3. אימות מחיקה (Verify החדש שלך)
+        MobileVerifications.verify_deleted(self.driver, expense_name)

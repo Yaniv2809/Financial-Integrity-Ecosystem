@@ -18,10 +18,10 @@ class APIWorkflows:
 
     @staticmethod
     @allure.step("Workflow: Create New Expense")
-    def create_expense(description, amount, date, category):
+    def create_expense(expense_name, amount, date, category):
         url = ConfigManager.get_env_data()['api_url']
         payload = {
-            "description": description,
+            "expense_name": expense_name,
             "amount": amount,
             "date": date,
             "category": category
@@ -30,10 +30,10 @@ class APIWorkflows:
 
     @staticmethod
     @allure.step("Workflow: Update Expense ID: {expense_id}")
-    def update_expense(expense_id, description, amount, date, category):
+    def update_expense(expense_id, expense_name, amount, date, category):
         url = ConfigManager.get_env_data()['api_url']
         payload = {
-            "description": description,
+            "expense_name": expense_name,
             "amount": amount,
             "date": date,
             "category": category

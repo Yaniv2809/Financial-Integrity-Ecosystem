@@ -1,0 +1,13 @@
+test_id,expense_name,amount,category,date,status
+test01,Business Lunch Web,150,Food,2025-05-20,success
+test02,Taxi to office,50,Transportation,2025-05-21,success
+test02,Client Dinner,320,Food,2025-05-22,success
+test02,New Monitor,850,Accommodation,2025-05-23,success
+test03,Coffee,15,Food,2025-06-01,success
+test03,Bus ticket,10,Transportation,2025-06-02,success
+test04,Business Trip Paris,100,Transportation,2025-06-10,success
+test05,Negative Test,-50,Food,2025-06-16,failure
+test06,To Be Deleted,99,Food,2026-01-01,success
+test13,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,100,Fashion,2024-01-01,success
+test13,"",50,Transportation,2024-01-01,failure
+test13,"   ",300,Education,2024-01-01,failure

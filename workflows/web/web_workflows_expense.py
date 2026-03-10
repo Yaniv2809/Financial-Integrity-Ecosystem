@@ -6,11 +6,9 @@ class WebWorkflows:
 
     @staticmethod
     @allure.step("Create a new expense in Web workflow")
-    def create_expense(page, description, amount, category="Food", date="2023-10-15"):
-        """
-        מזין תיאור, סכום, קטגוריה ותאריך, ולוחץ על 'הוסף'.
-        """
-        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+    def create_expense(page, expense_name, amount=100, category="Food", date="2023-10-15"):
+
+        UIActions.fill_text(page, ExpenseTrackerPage.expense_name, expense_name)
         UIActions.fill_text(page, ExpenseTrackerPage.txt_amount, str(amount))
         UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)
         UIActions.fill_text(page, ExpenseTrackerPage.add_date, date)
@@ -19,7 +17,7 @@ class WebWorkflows:
 
     @staticmethod
     @allure.step("Fill expense form and catch expected alert")
-    def validate_expense_and_alert(page, description, amount, category="Food", date="2023-10-15"):
+    def validate_expense_and_alert(page, expense_name, amount, category="Food", date="2023-10-15"):
         # 1. יצרנו מילון ריק לאיסוף הנתונים
         alert_received = {"appeared": False, "text": ""}
 
@@ -31,7 +29,7 @@ class WebWorkflows:
         # 3. מחברים את המאזין
         page.once("dialog", on_dialog)
         # 4. ממלאים את הרשומה
-        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+        UIActions.fill_text(page, ExpenseTrackerPage.expense_name, expense_name)
         amount_locator = page.locator(ExpenseTrackerPage.txt_amount)
         amount_locator.click()
         amount_locator.press_sequentially(str(amount), delay=50)
@@ -49,14 +47,14 @@ class WebWorkflows:
 
     @staticmethod
     @allure.step("Validate Boundary Expense - status: {expected_status}")
-    def validate_boundary_expense(page, description, amount, date, category, expected_status):
+    def validate_boundary_expense(page, expense_name, amount, date, category, expected_status):
         """
         מבצע ניסיון הוספת הוצאה ומחזיר את התוצאות לאימות.
         מטפל ב-Alert אם צפוי כישלון, ובהכפלת טקסט ארוך.
         """
         # הכפלת טקסט ארוך לבדיקת boundary
-        if len(description) > 20 and set(description) == {"A"}:
-            description = "A" * 200
+        if len(expense_name) > 20 and set(expense_name) == {"A"}:
+            expense_name = "A" * 200
 
         # ספירת שורות לפני
         initial_count = page.locator(ExpenseTrackerPage.expense_name_items).count()
@@ -71,7 +69,7 @@ class WebWorkflows:
             page.once("dialog", on_dialog)
 
         # יצירת ההוצאה
-        UIActions.fill_text(page, ExpenseTrackerPage.txt_description, description)
+        UIActions.fill_text(page, ExpenseTrackerPage.expense_name, expense_name)
         UIActions.fill_text(page, ExpenseTrackerPage.txt_amount, str(amount))
         UIActions.fill_text(page, ExpenseTrackerPage.add_date, date)
         UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)
@@ -79,7 +77,7 @@ class WebWorkflows:
         page.wait_for_timeout(500)
 
         return {
-            "description": description,
+            "expense_name": expense_name,
             "initial_count": initial_count,
             "alert": alert_received
         }
