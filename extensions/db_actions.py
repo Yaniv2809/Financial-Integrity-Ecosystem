@@ -2,6 +2,11 @@ import sqlite3
 import allure
 
 class DBActions:
+    def __init__(self,data_base):
+        self.data_base = data_base
+
+    def close_db(self):
+        self.data_base.close()
     
     @staticmethod
     @allure.step("🗄️ Executing DB Query: {query}")
@@ -29,7 +34,7 @@ class DBActions:
                 return []
                 
         except sqlite3.Error as error:
-            print(f"❌ DB Error: {error}")
+            print(f" DB Error: {error}")
             raise error
             
         finally:

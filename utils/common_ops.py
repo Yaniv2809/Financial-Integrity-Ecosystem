@@ -28,7 +28,25 @@ def read_data_from_csv(file_path):
             data.append(row)
     return data
 
-#for performance analysis in test_e2e_web.py
+
+def read_data_from_csv_by_test(file_path, test_id):
+    all_data = read_data_from_csv(file_path)
+    return [row for row in all_data if row.get("test_id") == test_id]
+
+def read_json_data_by_test(file_path, test_id):
+    """
+    קורא נתונים מקובץ JSON, שומר עליהם כמילונים (Dictionaries),
+    ומסנן רק את הבלוק ששייך לטסט הספציפי.
+    """
+    import json
+    with open(file_path, 'r', encoding='utf-8') as f:
+        all_data = json.load(f)
+        
+    # מחזיר רשימה של מילונים שבהם ה-test_id תואם למה שביקשנו
+    return [row for row in all_data if isinstance(row, dict) and row.get("test_id") == test_id]
+
+
+#for performance analysis in test_e2e
 def calc_performance(times: list) -> dict:
     sorted_t = sorted(times)
     n = len(times)

@@ -1,6 +1,7 @@
 from playwright.sync_api import Locator, expect
 from smart_assertions import soft_assert, verify_expectations
 import allure
+import re
 
 class WebVerify:
   
@@ -65,6 +66,16 @@ class WebVerify:
         expect(element).to_have_value(expected_value)
 
 
+    @staticmethod
+    @allure.step("Verify that the element contains the expected text (ignore case)")
+    def contain_text_ignore_case(element: Locator, expected_text: str):
+        """
+        Verifies that the element contains the expected text, ignoring case sensitivity.
+        """
+        # אנחנו משתמשים ב-Regex כדי לחפש את הטקסט ולהתעלם מ-Case (re.IGNORECASE)
+        expect(element).to_have_text(re.compile(expected_text, re.IGNORECASE))
+
+
     # Soft Assertions    
     @staticmethod
     @allure.step("Soft assertion to check if the element has the expected text")
@@ -98,7 +109,7 @@ class WebVerify:
         """
        verifies that the number of elements matching the locator is equal to the expected count.
         """
-        expect(element).to_have_count(expected_count, timeout=5000)
+        expect(element).to_have_count(expected_count, timeout=3000)
 
     @staticmethod
     @allure.step("Verify element does not overflow its parent container")

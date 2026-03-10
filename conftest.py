@@ -3,6 +3,7 @@ import pytest
 import os
 import time
 import allure
+import requests
 from extensions.db_actions import DBActions
 from config.config import ConfigManager
 from workflows.api.api_workflows_expense import APIWorkflows
@@ -17,10 +18,10 @@ SCREENSHOTS_DIR = os.path.join(PROJECT_ROOT, "reports", "screenshots")
 TRACES_DIR = os.path.join(PROJECT_ROOT, "reports", "traces")
 LOGS_DIR = os.path.join(PROJECT_ROOT, "reports", "logs")
 
-# יצירת תיקיות דוחות אם לא קיימות
-os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-os.makedirs(TRACES_DIR, exist_ok=True)
-os.makedirs(LOGS_DIR, exist_ok=True)
+# # יצירת תיקיות דוחות אם לא קיימות
+# os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
+# os.makedirs(TRACES_DIR, exist_ok=True)
+# os.makedirs(LOGS_DIR, exist_ok=True)
 
 
 # ==========================================
@@ -111,14 +112,37 @@ def trace_manager(request):
 # 3. API Fixtures - Function scope
 # ==========================================
 @pytest.fixture(scope="function")
-def api_setup():
+def api_setup(request):
     """
     פיקסטור לטסטים של API.
-    ה-URL מוגדר ב-Workflows, כאן ניתן להוסיף Token/Auth בעתיד.
+    מגדיר סשן (Session) לביצועים מהירים, כותרות דיפולטיביות, וכתובת בסיס.
     """
     print("\n[SETUP] Preparing API Environment...")
-    yield
-    print("\n[TEARDOWN] API Test Completed.")
+    
+    # 1. יצירת סשן (מייעל ביצועים ושומר על נתוני התחברות)
+    session = requests.Session()
+    
+    # 2. הגדרת כותרות קבועות (Headers) לכל הבקשות
+    session.headers.update({
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+        # "Authorization": f"Bearer {ConfigManager.get_token()}" # הכנה לטוקן בעתיד
+    })
+    
+    # 3. משיכת הכתובת מתוך קובץ הקונפיגורציה
+    # ודא שיש לך פונקציה מתאימה ב-ConfigManager, או שנה לפי המימוש שלך
+    api_url = ConfigManager.get_env_data()["api_url"]
+    
+    # 4. הזרקת הסשן והכתובת לתוך מחלקת הטסט כדי שתוכל להשתמש ב- self.session
+    if hasattr(request, "cls") and request.cls is not None:
+        request.cls.session = session
+        request.cls.api_url = api_url
+        
+    yield session # מחזירים את הסשן למקרה שרוצים להשתמש בו ישירות
+    
+    # 5. ניקוי: סגירת החיבורים בסיום הטסט
+    print("\n[TEARDOWN] Closing API Session...")
+    session.close()
 
 @pytest.fixture(scope="function")
 def api_cleanup():

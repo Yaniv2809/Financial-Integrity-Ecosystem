@@ -33,21 +33,6 @@ class TestWeb:
         WebVerify.contain_text(element["date"], str(data["date"]))        
         WebVerify.contain_text(element["category"], str(data["category"]).lower())
     
-    # @allure.title("Create a new expense via Web UI")
-    # @allure.description("This test verifies that a new expense can be added to the tracker")
-    # def test01_create_expense_web(self):
-    #     WebWorkflows.create_expense(
-    #         page=self.page,
-    #         description="Business Lunch Web",
-    #         amount=150,
-    #         date="2025-05-20",
-    #         category="Food"
-    #     )
-    #     element = ExpenseTrackerPage.get_last_expense_elements(self.page)
-    #     WebVerify.contain_text(element["name"], "Business Lunch Web")
-    #     WebVerify.contain_text(element["amount"], "$150")
-    #     WebVerify.contain_text(element["date"], "2025-05-20")        
-    #     WebVerify.contain_text(element["category"], "food")
 
     #2
     @allure.title("Create multiple expenses via DDT")
@@ -327,3 +312,21 @@ class TestWeb:
             )
             WebVerify.soft_all()
 
+
+
+
+ # @allure.title("Create a new expense via Web UI")
+    # @allure.description("This test verifies that a new expense can be added to the tracker")
+    # def test01_create_expense_web(self):
+    #     WebWorkflows.create_expense(
+    #         page=self.page,
+    #         description="Business Lunch Web",
+    #         amount=150,
+    #         date="2025-05-20",
+    #         category="Food"
+    #     )
+    #     element = ExpenseTrackerPage.get_last_expense_elements(self.page)
+    #     WebVerify.contain_text(element["name"], "Business Lunch Web")
+    #     WebVerify.contain_text(element["amount"], "$150")
+    #     WebVerify.contain_text(element["date"], "2025-05-20")        
+    #     WebVerify.contain_text(element["category"], "food")

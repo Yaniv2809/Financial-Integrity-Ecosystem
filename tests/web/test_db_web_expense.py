@@ -16,18 +16,18 @@ class TestDBWeb:
     @allure.title("Web & DB: Inject full DB data to Web UI")
     @allure.description("Reads a complete record from SQLite and injects it into the expense tracker website.")
     def test01_web_driven_by_db(self):
-        # 1. קריאה מ-DB
+        # 1. call DB
         query = "SELECT expense_name, amount, date, category FROM expenses WHERE expense_name = 'Web_Course'"
         records = DBActions.execute_query(self.db_path, query)
         DBVerifications.verify_record_count(records, expected_count=1)
         
-        # 2. חילוץ הנתונים
+        # 2. get data
         db_name, db_amount, db_date, db_category = records[0]
         db_amount_str = str(int(db_amount))
         
         print(f"\nPulled from DB: {db_name} | ${db_amount_str} | {db_date} | {db_category}")
         
-        # 3. הזרקה ל-Web UI
+        # 3. inject to Web UI
         WebWorkflows.create_expense(
             page=self.page, 
             expense_name=db_name, 
@@ -36,7 +36,7 @@ class TestDBWeb:
             category=db_category
         )
         
-        # 4. אימות מלא
+        # 4. full verify
         element = ExpenseTrackerPage.get_last_expense_elements(self.page)
         WebVerify.contain_text(element["name"], db_name)
         WebVerify.contain_text(element["amount"], f"${db_amount_str}")

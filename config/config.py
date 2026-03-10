@@ -25,3 +25,10 @@ class ConfigManager:
     def get_performance_config():
         config = ConfigManager.get_config()
         return config.get("performance")
+    
+
+    @staticmethod
+    def get_db_path():
+        """מחשב באופן דינמי את הנתיב למסד הנתונים מכל מקום בפרויקט"""
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(project_root, "data", "expense_db.db")

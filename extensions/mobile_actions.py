@@ -1,10 +1,12 @@
 import time
+import allure
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.common.exceptions import NoSuchElementException
-from page_objects.mobile.expense_mobile_page import MobileExpensePage
+from page_objects.mobile.atid_expense_appium_page import AtidExpenseAppiumPage
+from selenium.webdriver.common.by import By
 
 
-class MobileActions(MobileExpensePage):
+class MobileActions(AtidExpenseAppiumPage):
 
     def __init__(self, driver):
         self.driver = driver
@@ -113,5 +115,44 @@ class MobileActions(MobileExpensePage):
         import os
         os.makedirs("logs/screenshots", exist_ok=True)
         self.driver.save_screenshot(f"logs/screenshots/{name}.png")
+
+    
+
+
+    @staticmethod
+    def is_displayed(name, driver):
+        locator = (By.XPATH, f"//*[contains(@text, '{name}')]")
+        assert driver.find_element(*locator).is_displayed(), f"Element with text {name} was not found!"
+   #is_displayed(name, driver) → בודקת טקסט בלבד
+
+    @staticmethod
+    def visible(driver, locator):
+        assert driver.find_element(*locator).is_displayed(), \
+            f"Element {locator} was not found!"   
+    #visible(driver, locator) → בודקת locator ספציפי
+    
+    @staticmethod
+    @allure.step("Verify expense added to table")
+    def verify_expense_added(driver, name: str, amount: str):
+
+        name_locator = (By.XPATH, f"//*[@text='{name}']")
+        amount_locator = (By.XPATH, f"//*[@text='{amount}']")
+
+        assert driver.find_element(*name_locator).is_displayed(), \
+            f"Expense name '{name}' not found!"
+
+        assert driver.find_element(*amount_locator).is_displayed(), \
+            f"Expense amount '{amount}' not found!"     
+
+
+    @staticmethod
+    @allure.step("Verify expense was deleted")
+    def verify_deleted(driver, name: str):
+        # שימוש ב-find_elements (ברבים) מחזיר רשימה
+        locator = (By.XPATH, f"//*[contains(@text, '{name}')]")
+        elements = driver.find_elements(*locator)
+        
+        # אם האורך הוא 0, סימן שזה לא נמצא = הצלחה!
+        assert len(elements) == 0, f"Failure: The expense '{name}' still exists in the list."    
 
 

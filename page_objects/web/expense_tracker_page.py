@@ -7,14 +7,14 @@ class ExpenseTrackerPage:
     מכיל רק את הסלקטורים של האתר.
     """
     
-    txt_description = "input[id='expense-name']"      # שדה תיאור ההוצאה
+    expense_name = "input[id='expense-name']"      # שדה תיאור ההוצאה
     txt_amount = "input[id='expense-amount']"         # שדה סכום ההוצאה
     category_dropdown = "select[id='expense-category']" # תפריט בחירת קטגוריה
     add_date = "input[id='expense-date']"              # שדה תאריך ההוצאה
     btn_add = "button[id='add-expense']"              # כפתור הוספת הוצאה
-    list_expense_rows = "tbody tr"            # שורות הטבלה (לאימות נתונים)
+    list_expense_rows = "#expense-list li"            # שורות הטבלה (לאימות נתונים)
     delete_buttons = "//*[@id='expense-list']//button"     # כפתורי מחיקה (לאימות מחיקה)
-    expanse_list = "[id='expense-list']"                         # רשימת ההוצאות)
+    expense_list = "[id='expense-list']"                         # רשימת ההוצאות)
     #list elements for verification
     expense_name_items = ".expense-name"          # שמות ההוצאות ברשימה
     expense_amount_items = ".expense-amount"      # סכומי ההוצאות ברשימה
