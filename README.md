@@ -138,6 +138,3 @@ allure serve allure-results
 *Built with ❤️ for true End-to-End Quality Assurance.*
 
 ```
--GitHub, זה נראה אש!
-
-```
