@@ -16,17 +16,31 @@ class Logger:
         self.logger.setLevel(logging.INFO)
 
         if not self.logger.handlers:
-            log_directory = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
+            log_directory = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'reports', 'logs')
             os.makedirs(log_directory, exist_ok=True)
+
+            # Keep only the last 50 log files
+            log_files = sorted(
+                [f for f in os.listdir(log_directory) if f.startswith("execution_") and f.endswith(".log")],
+            )
+            if len(log_files) > 50:
+                for old_file in log_files[:-50]:
+                    os.remove(os.path.join(log_directory, old_file))
+            # Clean up empty log files
+            for f in os.listdir(log_directory):
+                if f.startswith("execution_") and f.endswith(".log"):
+                    fpath = os.path.join(log_directory, f)
+                    if os.path.getsize(fpath) == 0:
+                        os.remove(fpath)
 
             # create dinamic log file name based on current date and time
             log_filename = datetime.now().strftime("execution_%Y-%m-%d_%H-%M-%S.log")
             log_filepath = os.path.join(log_directory, log_filename)
 
-            # מגדיר לאן הלוגים ילכו (לקובץ)
+            # the logs go to (file)
             file_handler = logging.FileHandler(log_filepath, encoding='utf-8')
             
-            # מגדיר גם הדפסה לקונסול (כדי שנראה בזמן אמת)
+            # print to console
             console_handler = logging.StreamHandler()
 
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

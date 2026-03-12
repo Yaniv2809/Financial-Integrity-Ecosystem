@@ -1,6 +1,6 @@
 import pytest
 import allure
-from utils.common_ops import read_json_data_by_test, load_test_data
+from utils.common_ops import read_json_data_by_test
 from data.api.api_expense_data import MASTER_API_DATA
 from workflows.api.api_workflows_expense import APIWorkflows
 from extensions.api_verification import APIVerifications

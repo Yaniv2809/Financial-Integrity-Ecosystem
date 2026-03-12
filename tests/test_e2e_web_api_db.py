@@ -12,8 +12,7 @@ from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from config.config import ConfigManager
 from utils.common_ops import calc_performance
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_test.db")
+
 
 
 @allure.epic("E2E Integration")
@@ -25,7 +24,7 @@ class TestE2EWebApiDb:
     E2E test: creates a record via the Web UI, extracts displayed data from UI elements,
     then simultaneously inserts it into the JSON server (api_url) and SQLite DB.
     """
-
+    db_path = ConfigManager.get_db_path()
     @allure.title("E2E: Web UI → Extract Data → Insert to API + DB")
     @allure.description(
         "Creates an expense on the web UI, reads it back from the DOM elements, "
@@ -101,7 +100,7 @@ class TestE2EWebApiDb:
             # ── STEP 5: INSERT extracted data to SQLite DB ───────
             with allure.step("Step 5: INSERT extracted data to SQLite DB"):
                 insert_query = "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)"
-                DBActions.execute_query(DB_PATH, insert_query, (ui_name, ui_amount, ui_date, ui_category))
+                DBActions.execute_query(self.db_path, insert_query, (ui_name, ui_amount, ui_date, ui_category))
                 print(f"[DB] Inserted record: {ui_name}")
 
             # ── STEP 6: Verify API record ────────────────────────
@@ -116,7 +115,7 @@ class TestE2EWebApiDb:
             # ── STEP 7: Verify DB record ─────────────────────────
             with allure.step("Step 7: Verify record exists in SQLite DB"):
                 records = DBActions.execute_query(
-                    DB_PATH,
+                    self.db_path,
                     "SELECT expense_name, amount, date, category FROM expenses WHERE expense_name = ?",
                     (ui_name,),
                 )
@@ -149,7 +148,7 @@ class TestE2EWebApiDb:
                     # Time DB INSERT
                     t0 = time.time()
                     DBActions.execute_query(
-                        DB_PATH,
+                        self.db_path,
                         "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)",
                         (iter_name, ui_amount, ui_date, ui_category),
                     )
@@ -192,7 +191,7 @@ class TestE2EWebApiDb:
                 requests.delete(f"{api_url}/{api_id}")
                 print(f"[CLEANUP] Deleted API record ID: {api_id}")
             DBActions.execute_query(
-                DB_PATH,
+                self.db_path,
                 "DELETE FROM expenses WHERE expense_name = ?",
                 (expense_name,),
             )
@@ -204,7 +203,7 @@ class TestE2EWebApiDb:
                     pass
             for pname in perf_db_names:
                 try:
-                    DBActions.execute_query(DB_PATH, "DELETE FROM expenses WHERE expense_name = ?", (pname,))
+                    DBActions.execute_query(self.db_path, "DELETE FROM expenses WHERE expense_name = ?", (pname,))
                 except Exception:
                     pass
             print("[CLEANUP] Deleted all records (main + 10 perf iterations)")
