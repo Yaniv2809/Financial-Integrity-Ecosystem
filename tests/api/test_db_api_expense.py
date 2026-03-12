@@ -1,5 +1,6 @@
 import allure
 import pytest
+import random
 from workflows.api.api_workflows_expense import APIWorkflows
 from extensions.api_verification import APIVerifications
 from extensions.db_actions import DBActions
@@ -17,7 +18,7 @@ class TestDBAPI:
                         "verifies data integrity across layers, and cleans up.")
     def test01_verify_api_in_db(self):
         # Test Data
-        expense_name = "API_to_DB_Test"
+        expense_name = f"API_to_DB_Test{random.randint(1000, 9999)}"
         expense_amount = 999.0
         expense_date = "2025-05-05"
         expense_category = "Food"
@@ -45,11 +46,11 @@ class TestDBAPI:
         assert record[2] == expense_date, f"DB date mismatch: expected '{expense_date}', got '{record[2]}'"
         assert record[3] == expense_category, f"DB category mismatch: expected '{expense_category}', got '{record[3]}'"
 
-        # # 4. Cleanup — מחיקה מ-API ומ-DB
-        # APIWorkflows.delete_expense(created_id)
-        # delete_query = "DELETE FROM expenses WHERE expense_name = ?"
-        # DBActions.execute_query(self.db_path, delete_query, (expense_name,))
+        # 4. Cleanup — מחיקה מ-API ומ-DB
+        APIWorkflows.delete_expense(created_id)
+        delete_query = "DELETE FROM expenses WHERE expense_name = ?"
+        DBActions.execute_query(self.db_path, delete_query, (expense_name,))
 
-        # # 5. אימות שהניקוי עבד — הרשומה לא קיימת יותר
-        # records_after = DBActions.execute_query(self.db_path, select_query, (expense_name,))
-        # DBVerifications.verify_record_count(records_after, 0)
+        # 5. אימות שהניקוי עבד — הרשומה לא קיימת יותר
+        records_after = DBActions.execute_query(self.db_path, select_query, (expense_name,))
+        DBVerifications.verify_record_count(records_after, 0)

@@ -42,4 +42,11 @@ class UIActions:
     def select_option(page, selector, option):
         log.info(f"UI Action: Selecting '{option}' in dropdown with selector: '{selector}'")
         page.locator(selector).select_option(label=option)
+
+    @staticmethod
+    @allure.step("Clear field: {selector}")
+    def clear_field(page, selector):
+        field = page.locator(selector)
+        if field.input_value():
+            field.clear()
     

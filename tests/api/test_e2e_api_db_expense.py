@@ -190,3 +190,74 @@ class TestE2EApiDb:
             (created_id,)
         )
         DBVerifications.verify_record_count(records, 0)
+
+    # ============================================================
+    # E2E_09: Data Integrity — Set Theory & ACID
+    # ============================================================
+    @allure.title("E2E_09: API & DB Data Integrity: Set Theory & ACID")
+    @allure.description(
+        "מוודא שסך ההוצאות עודכן כראוי, "
+        "ושניתן לבודד את הרשומה החדשה באמצעות תורת הקבוצות (Set Difference)."
+    )
+    def test09_data_integrity_with_set_theory(self):
+        expense_name = "Integrity_Check_Expense"
+        expense_amount = 100
+
+        # ==========================================
+        # PRE-CONDITION: שמירת המצב הקיים ב-DB
+        # ==========================================
+
+        # א. סך כל ההוצאות הקיים
+        sum_query = "SELECT SUM(amount) FROM expenses"
+        initial_sum_result = DBActions.execute_query(self.db_path, sum_query)
+        initial_total = initial_sum_result[0][0] if (initial_sum_result and initial_sum_result[0][0] is not None) else 0.0
+
+        # ב. קבוצת כל שמות ההוצאות הקיימות (Set A)
+        all_names_query = "SELECT expense_name FROM expenses"
+        initial_records = DBActions.execute_query(self.db_path, all_names_query)
+        initial_set = set([str(row[0]) for row in initial_records])
+
+        # ==========================================
+        # ACTION: יצירת הוצאה דרך Flask API
+        # ==========================================
+        response = requests.post(_flask_url(), json={
+            "expense_name": expense_name, "amount": expense_amount,
+            "date": "2026-05-05", "category": "Food"
+        })
+        APIVerifications.verify_status_code(response, 201)
+
+        # ==========================================
+        # POST-CONDITION: המצב החדש ב-DB (Set B)
+        # ==========================================
+        final_sum_result = DBActions.execute_query(self.db_path, sum_query)
+        final_total = final_sum_result[0][0]
+
+        final_records = DBActions.execute_query(self.db_path, all_names_query)
+        final_set = set([str(row[0]) for row in final_records])
+
+        # ==========================================
+        # VALIDATIONS: שלמות נתונים ותורת הקבוצות
+        # ==========================================
+        try:
+            # 1. ולידציה מתמטית (ACID - Consistency)
+            expected_total = initial_total + expense_amount
+            assert final_total == expected_total, \
+                f"DB Math Error! Expected {expected_total}, Got {final_total}"
+
+            # 2. Set Difference: B - A = בדיוק רשומה אחת
+            newly_added_records = final_set - initial_set
+            assert len(newly_added_records) == 1, \
+                f"Set Error! Expected 1 new record, got {len(newly_added_records)}"
+
+            # 3. הרשומה שנוספה היא אכן זו שיצרנו
+            isolated_record = newly_added_records.pop()
+            assert isolated_record == expense_name, \
+                f"Mismatch! Expected '{expense_name}', Got '{isolated_record}'"
+
+        finally:
+            # CLEANUP: מחיקה עם parameterized query
+            DBActions.execute_query(
+                self.db_path,
+                "DELETE FROM expenses WHERE expense_name = ?",
+                (expense_name,)
+            )

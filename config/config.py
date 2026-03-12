@@ -29,6 +29,12 @@ class ConfigManager:
 
     @staticmethod
     def get_db_path():
-        """מחשב באופן דינמי את הנתיב למסד הנתונים מכל מקום בפרויקט"""
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        return os.path.join(project_root, "data", "expense_db.db")
+        """קורא את נתיב מסד הנתונים מקובץ config.json"""
+        config = ConfigManager.get_config()
+        return config.get("db_path")
+    
+    @staticmethod
+    def get_db_2_path():
+        """קורא את נתיב מסד הנתונים מקובץ config.json"""
+        config = ConfigManager.get_config()
+        return config.get("db_2_path")

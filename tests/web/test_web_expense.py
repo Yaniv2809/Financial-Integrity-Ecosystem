@@ -138,7 +138,7 @@ class TestWeb:
             )
         else:
             # הרשומה לא נוספה — המערכת חסמה, זה תקין
-            print(f"\n[PASS] Negative amount was correctly blocked.")
+            print("\n[PASS] Negative amount was correctly blocked.")
 
     #6
     @allure.title("Verify deletion of an expense")
@@ -225,6 +225,7 @@ class TestWeb:
             initial_count,
             alert_text=expected_msg
         )
+        
 
 
     @allure.title("Test - Expense name trim validation") 
@@ -313,7 +314,27 @@ class TestWeb:
             WebVerify.soft_all()
 
 
-
+    # @allure.title("Test05: Expense Tracker DDT Validation")
+    # @allure.description("This test verify Expense Tracker with DDT")
+    # @pytest.mark.parametrize("expense_3_data", read_data_from_csv_by_test(MASTER_CSV,"test13"))
+    # def test05_expense_boundry_ddt(self, expense_3_data):
+    #     # atid_expense_flows.navigate_to(EXPENSE_URL)
+    #     # atid_expense_flows.verify_long_expense_ddt(expense_data)
+        
+    #     if expense_3_data['expected_status'] == "failure":
+    #         WebVerify.verify_alert_text(
+    #             actual_text=atid_expense_flows.last_alert_text,
+    #             expected_text="Please enter all details for the expense.",
+    #                 description="Verify popup appeared with correct message"
+    #                 )
+    #             #טסט ציפה שלא תתווסף הוצאה חדשה
+    #      # אבל בפועל נוספה עוד הוצאה.    
+    #      #הטסט כאשר עושים רווח והוספה כל הנתונים אמור לא להוסיף לטבלה אך הוסיף וזה bug
+    #      #והוספה  מחרוזת ארוכה מאפשר ושובר את הטבלה וזה באג
+            
+    #     WebVerify.visible(atid_expense_flows.expense_page.add_expense_button)
+    #     WebVerify.visible(atid_expense_flows.expense_page.expense_name_field)
+    
 
  # @allure.title("Create a new expense via Web UI")
     # @allure.description("This test verifies that a new expense can be added to the tracker")

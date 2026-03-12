@@ -16,8 +16,12 @@ class DBActions:
         """
         connection = None
         try:
-            connection = sqlite3.connect(db_path)
+            connection = sqlite3.connect(db_path, timeout=10)
             cursor = connection.cursor()
+            
+            # --- WAL ---
+            cursor.execute("PRAGMA journal_mode=WAL;")
+            cursor.execute("PRAGMA busy_timeout=10000;")
             
             # הרצת השאילתה עם פרמטרים (למניעת SQL Injection)
             cursor.execute(query, params)

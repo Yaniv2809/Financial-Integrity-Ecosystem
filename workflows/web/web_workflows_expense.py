@@ -7,7 +7,8 @@ class WebWorkflows:
     @staticmethod
     @allure.step("Create a new expense in Web workflow")
     def create_expense(page, expense_name, amount=100, category="Food", date="2023-10-15"):
-
+        UIActions.clear_field(page, ExpenseTrackerPage.expense_name)
+        UIActions.clear_field(page, ExpenseTrackerPage.txt_amount)
         UIActions.fill_text(page, ExpenseTrackerPage.expense_name, expense_name)
         UIActions.fill_text(page, ExpenseTrackerPage.txt_amount, str(amount))
         UIActions.select_option(page, ExpenseTrackerPage.category_dropdown, category)
