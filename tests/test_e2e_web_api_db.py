@@ -2,6 +2,7 @@ import allure
 import pytest
 import time
 import os
+import requests
 from workflows.web.web_workflows_expense import WebWorkflows
 from extensions.api_actions import APIActions
 from extensions.api_verification import APIVerifications
@@ -9,6 +10,7 @@ from extensions.db_actions import DBActions
 from extensions.db_verifications import DBVerifications
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 from config.config import ConfigManager
+from utils.common_ops import calc_performance
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_test.db")
@@ -36,6 +38,8 @@ class TestE2EWebApiDb:
         expense_category = "Education"
         expense_date = "2026-05-15"
         api_id = None
+        perf_api_ids = []
+        perf_db_names = []
 
         try:
             # ── STEP 1: Baseline count ───────────────────────────
@@ -70,6 +74,9 @@ class TestE2EWebApiDb:
 
                 # Parse amount: strip '$' prefix and convert to float
                 ui_amount = float(ui_amount_raw.replace("$", "").strip())
+
+                # Parse category: strip parentheses from UI display (e.g. "(education)" → "education")
+                ui_category = ui_category.strip("() ")
 
                 print(f"\n[UI EXTRACTED] Name: {ui_name} | Amount: {ui_amount} | Date: {ui_date} | Category: {ui_category}")
                 allure.attach(
@@ -119,16 +126,85 @@ class TestE2EWebApiDb:
                 assert records[0][2] == ui_date, f"DB date mismatch: {records[0][2]} != {ui_date}"
                 print("[DB VERIFY] Record confirmed in SQLite")
 
-        finally:
-            pass
+            # ── STEP 8: Performance - Multiple Iterations ────────
+            with allure.step("Step 8: Performance test (10 iterations)"):
+                perf_cfg = ConfigManager.get_performance_config()
+                api_times = []
+                db_times = []
+
+                for i in range(10):
+                    iter_name = f"Perf_Test_{int(time.time())}_{i}"
+
+                    # Time API POST
+                    t0 = time.time()
+                    resp = APIActions.post(api_url, {
+                        "expense_name": iter_name,
+                        "amount": ui_amount,
+                        "date": ui_date,
+                        "category": ui_category,
+                    })
+                    api_times.append(time.time() - t0)
+                    perf_api_ids.append(resp.json().get("id"))
+
+                    # Time DB INSERT
+                    t0 = time.time()
+                    DBActions.execute_query(
+                        DB_PATH,
+                        "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)",
+                        (iter_name, ui_amount, ui_date, ui_category),
+                    )
+                    db_times.append(time.time() - t0)
+                    perf_db_names.append(iter_name)
+
+                # Calculate performance stats
+                api_perf = calc_performance(api_times)
+                db_perf = calc_performance(db_times)
+
+                report = (
+                    f"API Performance (10 iterations):\n"
+                    f"  Avg: {api_perf['avg']:.4f}s | P95: {api_perf['p95']:.4f}s | "
+                    f"Min: {api_perf['min']:.4f}s | Max: {api_perf['max']:.4f}s | "
+                    f"Degradation: {api_perf['degradation']*100:.1f}%\n"
+                    f"DB Performance (10 iterations):\n"
+                    f"  Avg: {db_perf['avg']:.4f}s | P95: {db_perf['p95']:.4f}s | "
+                    f"Min: {db_perf['min']:.4f}s | Max: {db_perf['max']:.4f}s | "
+                    f"Degradation: {db_perf['degradation']*100:.1f}%"
+                )
+                print(f"\n[PERFORMANCE]\n{report}")
+                allure.attach(report, name="Performance Report", attachment_type=allure.attachment_type.TEXT)
+
+                # Assertions
+                assert api_perf["avg"] < perf_cfg["max_avg_creation_time"], \
+                    f"API avg {api_perf['avg']:.3f}s exceeds max {perf_cfg['max_avg_creation_time']}s"
+                assert api_perf["p95"] < perf_cfg["max_p95_time"], \
+                    f"API p95 {api_perf['p95']:.3f}s exceeds max {perf_cfg['max_p95_time']}s"
+                assert db_perf["avg"] < perf_cfg["max_avg_creation_time"], \
+                    f"DB avg {db_perf['avg']:.3f}s exceeds max {perf_cfg['max_avg_creation_time']}s"
+                assert db_perf["p95"] < perf_cfg["max_p95_time"], \
+                    f"DB p95 {db_perf['p95']:.3f}s exceeds max {perf_cfg['max_p95_time']}s"
+
+
         # finally:
-        #     # ── CLEANUP ──────────────────────────────────────────
-        #     if api_id:
-        #         requests.delete(f"{api_url}/{api_id}")
-        #         print(f"[CLEANUP] Deleted API record ID: {api_id}")
-        #     DBActions.execute_query(
-        #         DB_PATH,
-        #         "DELETE FROM expenses WHERE expense_name = ?",
-        #         (expense_name,),
-        #     )
-        #     print(f"[CLEANUP] Deleted DB record: {expense_name}")
+        #     pass
+        finally:
+            # ── CLEANUP ──────────────────────────────────────────
+            if api_id:
+                requests.delete(f"{api_url}/{api_id}")
+                print(f"[CLEANUP] Deleted API record ID: {api_id}")
+            DBActions.execute_query(
+                DB_PATH,
+                "DELETE FROM expenses WHERE expense_name = ?",
+                (expense_name,),
+            )
+            # Cleanup performance iteration records
+            for pid in perf_api_ids:
+                try:
+                    requests.delete(f"{api_url}/{pid}")
+                except Exception:
+                    pass
+            for pname in perf_db_names:
+                try:
+                    DBActions.execute_query(DB_PATH, "DELETE FROM expenses WHERE expense_name = ?", (pname,))
+                except Exception:
+                    pass
+            print("[CLEANUP] Deleted all records (main + 10 perf iterations)")
