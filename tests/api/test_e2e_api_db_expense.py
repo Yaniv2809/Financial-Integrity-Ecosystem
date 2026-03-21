@@ -192,14 +192,14 @@ class TestE2EApiDb:
         DBVerifications.verify_record_count(records, 0)
 
     # ============================================================
-    # E2E_09: Data Integrity — Set Theory & ACID
+    # E2E_05: Data Integrity — Set Theory & ACID
     # ============================================================
-    @allure.title("E2E_09: API & DB Data Integrity: Set Theory & ACID")
+    @allure.title("E2E_05: API & DB Data Integrity: Set Theory & ACID")
     @allure.description(
         "מוודא שסך ההוצאות עודכן כראוי, "
         "ושניתן לבודד את הרשומה החדשה באמצעות תורת הקבוצות (Set Difference)."
     )
-    def test09_data_integrity_with_set_theory(self):
+    def test05_data_integrity_with_set_theory(self):
         expense_name = "Integrity_Check_Expense"
         expense_amount = 100
 
@@ -236,7 +236,7 @@ class TestE2EApiDb:
         final_set = set([str(row[0]) for row in final_records])
 
         # ==========================================
-        # VALIDATIONS: שלמות נתונים ותורת הקבוצות
+        # VALIDATIONS: Data integrity set theory
         # ==========================================
         try:
             # 1. ולידציה מתמטית (ACID - Consistency)
@@ -255,9 +255,12 @@ class TestE2EApiDb:
                 f"Mismatch! Expected '{expense_name}', Got '{isolated_record}'"
 
         finally:
-            # CLEANUP: מחיקה עם parameterized query
             DBActions.execute_query(
                 self.db_path,
                 "DELETE FROM expenses WHERE expense_name = ?",
                 (expense_name,)
             )
+
+
+
+

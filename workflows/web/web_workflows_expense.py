@@ -1,4 +1,5 @@
 import allure
+from playwright.sync_api import Page
 from extensions.ui_actions import UIActions
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 
@@ -82,4 +83,12 @@ class WebWorkflows:
             "initial_count": initial_count,
             "alert": alert_received
         }
- 
+    
+    staticmethod
+    @allure.step("Simulate UI failure to trigger AI error analysis")
+    def simulate_ui_failure_for_ai(page: Page):
+        UIActions.click(
+            page=page, 
+            selector=ExpenseTrackerPage.non_existent_ai_button, 
+            timeout=2000
+        )

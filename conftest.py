@@ -280,8 +280,7 @@ def pytest_runtest_makereport(item, call):
         # בודק האם לטסט הספציפי הזה יש את המרקר שלנו
         if item.get_closest_marker("use_ai"):
             error_message = str(call.excinfo.value) if call.excinfo else "Unknown error"
-            print(f"\n[AI Analysis] Analyzing failure in {test_name}... please wait...")
-            
+            print(f"\n[AI Analysis] Analyzing failure in {test_name}... please wait...")            
             try:
                 ai_explanation = get_ai_error_analysis(error_message)
                 
@@ -289,7 +288,7 @@ def pytest_runtest_makereport(item, call):
                 print(ai_explanation)
                 print("=============================================\n")
                 
-                # הצמדה לדוח האליור
+                # Attach AI insights directly to the test report
                 allure.attach(
                     body=f" Error Message:\n{error_message}\n\n🤖 AI Analysis:\n{ai_explanation}", 
                     name="🤖 AI Failure Analysis", 
@@ -304,3 +303,4 @@ def pytest_addoption(parser):
     parser.addoption(
         "--ai-analysis", action="store_true", default=False, help="Run AI analysis on test failures"
     )
+    

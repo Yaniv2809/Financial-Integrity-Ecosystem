@@ -10,7 +10,7 @@ from page_objects.web.expense_tracker_page import ExpenseTrackerPage
 @pytest.mark.e2e
 # @pytest.mark.fast_browser
 @pytest.mark.usefixtures("web_setup")
-class TestE2ELifecycleEnhanced:
+class TestE2ELifecycleWeb:
     
     def test_e2e_complete_lifecycle_bulletproof(self):
         # 1. data test

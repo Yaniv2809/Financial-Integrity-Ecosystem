@@ -1,7 +1,6 @@
 import allure
 import pytest
 import time
-import os
 import requests
 from workflows.web.web_workflows_expense import WebWorkflows
 from extensions.api_actions import APIActions
@@ -19,7 +18,7 @@ from utils.common_ops import calc_performance
 @allure.feature("Web UI → API + DB")
 @pytest.mark.e2e
 @pytest.mark.usefixtures("web_setup", "db_setup_teardown")
-class TestE2EWebApiDb:
+class TestE2EWebApiDbExpenseTracker:
     """
     E2E test: creates a record via the Web UI, extracts displayed data from UI elements,
     then simultaneously inserts it into the JSON server (api_url) and SQLite DB.

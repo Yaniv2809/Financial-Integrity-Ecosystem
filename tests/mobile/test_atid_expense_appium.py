@@ -13,6 +13,7 @@ import pytest
 from selenium.webdriver.common.by import By
 
 
+@pytest.mark.mobile
 @pytest.mark.usefixtures("mobile_driver")
 class TestAtidExpenseAppium:
     """
