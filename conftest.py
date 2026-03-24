@@ -1,33 +1,46 @@
-from playwright.sync_api import Playwright
 import pytest
 import os
 import time
+import json
 import allure
 import requests
 from extensions.db_actions import DBActions
 from config.config import ConfigManager
 from workflows.api.api_workflows_expense import APIWorkflows
 from utils.ai import get_ai_error_analysis 
+from playwright.sync_api import Playwright
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # ==========================================
 # Global Paths
 # ==========================================
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_db.db")
+DB_PATH = ConfigManager.get_db_path()
 SCREENSHOTS_DIR = os.path.join(PROJECT_ROOT, "reports", "screenshots")
 TRACES_DIR = os.path.join(PROJECT_ROOT, "reports", "traces")
 LOGS_DIR = os.path.join(PROJECT_ROOT, "reports", "logs")
 
-# # יצירת תיקיות דוחות אם לא קיימות
-# os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-# os.makedirs(TRACES_DIR, exist_ok=True)
-# os.makedirs(LOGS_DIR, exist_ok=True)
+# יצירת תיקיות דוחות אם לא קיימות (חיוני למניעת קריסות בריצה ראשונה)
+os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
+os.makedirs(TRACES_DIR, exist_ok=True)
+os.makedirs(LOGS_DIR, exist_ok=True)
 
+# ==========================================
+# CLI Options
+# ==========================================
+def pytest_addoption(parser):
+    """מוסיף דגל מותאם אישית להרצת AI על שגיאות"""
+    parser.addoption(
+        "--ai-analysis", 
+        action="store_true", 
+        default=False, 
+        help="Run AI analysis globally on all test failures"
+    )
 
 # ==========================================
 # 1. DB Fixtures - Session scope
 # ==========================================
-
 @pytest.fixture(scope="function")
 def inject_web_course_record():
     """מזריק רשומת Web_Course ל-DB לטסטי DB→Web integration"""
@@ -45,12 +58,6 @@ def inject_web_course_record():
 
 @pytest.fixture(scope="session")
 def db_setup_teardown():
-    """
-    יוצר את טבלת expenses אם אינה קיימת, ומנקה נתוני טסט בסיום.
-    שימו לב: לא autouse - רק טסטים שצריכים DB ישתמשו בזה.
-    ב-test_db.py יש להשתמש ב: @pytest.mark.usefixtures("db_setup_teardown")
-    """
-    print("\n[SETUP] Initializing Global DB Environment...")
     create_table_query = """
     CREATE TABLE IF NOT EXISTS expenses (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -70,14 +77,17 @@ def db_setup_teardown():
 # ==========================================
 @pytest.fixture(scope="class")
 def web_setup(request, playwright: Playwright):
-    # 1. קביעת מהירות ברירת המחדל (איטי לטובת שאר הטסטים)
+    is_ci = os.environ.get("CI") == "true"
     slow_mo_value = 1000
-    # 2. בדיקה חכמה: האם הטסט או המחלקה קיבלו תווית של ריצה מהירה?
     if request.node.get_closest_marker("fast_browser"):
-        slow_mo_value = 0  # ביטול ההשהיה לטובת בדיקות ביצועים
-    print(f"\n[SETUP] Launching Chrome Browser (slow_mo={slow_mo_value})...")
-    # 3. הפעלת הדפדפן עם המהירות הדינמית
-    browser = playwright.chromium.launch(headless=False, channel="chrome", slow_mo=slow_mo_value)
+        slow_mo_value = 0
+    headless = True if is_ci else False
+    print(f"\n[SETUP] Launching Browser (headless={headless}, slow_mo={slow_mo_value})...")
+    browser = playwright.chromium.launch(
+        headless=headless,
+        channel="chrome" if not is_ci else None,
+        slow_mo=slow_mo_value
+    )
     context = browser.new_context()
     page = context.new_page()
     url = ConfigManager.get_env_data()['web_url']
@@ -111,76 +121,95 @@ def trace_manager(request):
 # ==========================================
 # 3. API Fixtures - Function scope
 # ==========================================
+class LoggingRetry(Retry):
+    """
+    מחלקה שעוטפת את מנגנון ה-Retry הרשמי ומדפיסה אזהרה לקונסול
+    """
+    # רמה 1: הזחה של 4 רווחים (פונקציה בתוך המחלקה)
+    def increment(self, method=None, url=None, response=None, error=None, _pool=None, _stacktrace=None):
+        # רמה 2: הזחה של 8 רווחים (הקוד של הפונקציה)
+        retry_count = len(self.history) + 1
+        print(f"\n[NETWORK HEALING] Triggering Retry {retry_count} for {method} {url}")
+        
+        if response:
+            print(f"   -> Reason: Server returned Bad Status {response.status}")
+        if error:
+            print(f"   -> Reason: Network Error - {error}")
+            
+        return super().increment(method, url, response, error, _pool, _stacktrace)
+
+# --- כאן הסתיימה המחלקה LoggingRetry ---
+
+# רמה 0: ללא הזחה (הגדרת הפיקסטור)
 @pytest.fixture(scope="function")
 def api_setup(request):
     """
     פיקסטור לטסטים של API.
-    מגדיר סשן (Session) לביצועים מהירים, כותרות דיפולטיביות, וכתובת בסיס.
+    מגדיר סשן עם מנגנון Retries חכם וגלוי.
     """
-    print("\n[SETUP] Preparing API Environment...")
+    # רמה 1: הזחה של 4 רווחים (הקוד של הפיקסטור)
+    print("\n[SETUP] Preparing API Environment with Smart Retries...")
     
-    # 1. יצירת סשן (מייעל ביצועים ושומר על נתוני התחברות)
     session = requests.Session()
     
-    # 2. הגדרת כותרות קבועות (Headers) לכל הבקשות
+    # כאן אנחנו קוראים למחלקה שיצרנו למעלה!
+    retries = LoggingRetry(
+        total=3,                
+        backoff_factor=1,       
+        status_forcelist=[500, 502, 503, 504], 
+        allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT", "DELETE"] 
+    )
+    
+    adapter = HTTPAdapter(max_retries=retries)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
     session.headers.update({
         "Content-Type": "application/json",
         "Accept": "application/json"
-        # "Authorization": f"Bearer {ConfigManager.get_token()}" # הכנה לטוקן בעתיד
     })
     
-    # 3. משיכת הכתובת מתוך קובץ הקונפיגורציה
-    # ודא שיש לך פונקציה מתאימה ב-ConfigManager, או שנה לפי המימוש שלך
     api_url = ConfigManager.get_env_data()["api_url"]
     
-    # 4. הזרקת הסשן והכתובת לתוך מחלקת הטסט כדי שתוכל להשתמש ב- self.session
     if hasattr(request, "cls") and request.cls is not None:
         request.cls.session = session
         request.cls.api_url = api_url
         
-    yield session # מחזירים את הסשן למקרה שרוצים להשתמש בו ישירות
+    yield session 
     
-    # 5. ניקוי: סגירת החיבורים בסיום הטסט
     print("\n[TEARDOWN] Closing API Session...")
     session.close()
 
 @pytest.fixture(scope="function")
 def api_cleanup():
-    """
-    פיקסטור לניקוי נתונים שנוצרו במהלך טסטי API.
-    יש להשתמש בזה בטסטים שיוצרים נתונים (POST/PUT) כדי לשמור על סביבה נקייה.
-    ב-test_api.py יש להשתמש ב: @pytest.mark.usefixtures("api_cleanup")
-    """
     yield
     print("\n[TEARDOWN] Cleaning up API Test Data...")
-    # כאן ניתן להוסיף לוגיקה לניקוי נתונים שנוצרו במהלך הטסט, למשל מחיקת הוצאות שנוצרו.
 
 @pytest.fixture(scope="function")
 def api_token():
-    """
-    פיקסטור לקבלת Token לאימות בבקשות API.
-    כרגע מחזיר ערך סטטי, אבל ניתן להרחיב בעתיד לקבלת Token דינמי מהשרת.
-    """
-    # כאן ניתן להוסיף לוגיקה לקבלת Token אמיתי מהשרת אם יש צורך
     return "Bearer dummy_token_for_testing"
 
 @pytest.fixture(scope="function")
-def temp_expense_id():
-    """
-    פיקסטור ליצירת הוצאה זמנית לפני טסט ולקבל את ה-ID שלה.
-    לאחר הטסט, ניתן למחוק את ההוצאה כדי לשמור על סביבה נקייה.
-    """
-    # יצירת הוצאה זמנית
-    response = APIWorkflows.create_expense("Temp_Expense", 999, "2025-12-31", "Testing")
+def temp_expense_id(api_setup):
+    session = api_setup  # מקבלים את הסשן מהפיקסטור הראשי
+
+    response = APIWorkflows.create_expense(session, "Temp_Expense", 999, "2025-12-31", "Testing")
     expense_id = response.json().get("id")
+    
     yield expense_id
-    # ניקוי - מחיקת ההוצאה הזמנית
-    APIWorkflows.delete_expense(expense_id)
+
+    APIWorkflows.delete_expense(session, expense_id)
 
 
 @pytest.fixture(scope="function")
-def smart_expense_id():
+def smart_expense_id(api_setup):
+    """
+    פיקסטור חכם שמשתמש בהוצאה קיימת ממחלקת הטסטים אם ישנה,
+    או יוצר אחת זמנית אם הטסט רץ בנפרד.
+    """
     from tests.api.test_api_expense import TestAPI
+    
+    session = api_setup  # מקבלים את הסשן מהפיקסטור הראשי
 
     if TestAPI.created_id is not None:
         # ריצת מחלקה - test02 כבר יצר את ההוצאה
@@ -188,12 +217,12 @@ def smart_expense_id():
         # אין cleanup - test06 ידאג למחיקה
     else:
         # ריצה עצמאית - יוצר הוצאה זמנית עם cleanup אוטומטי
-        response = APIWorkflows.create_expense("Temp_Expense", 999, "2025-12-31", "Testing")
+        response = APIWorkflows.create_expense(session, "Temp_Expense", 999, "2025-12-31", "Testing")
         temp_id = response.json().get("id")
+        
         yield temp_id
-        APIWorkflows.delete_expense(temp_id)  # cleanup רק בריצה עצמאית
-
-
+        
+        APIWorkflows.delete_expense(session, temp_id)  # cleanup רק בריצה עצמאית
 
 # ==========================================
 # 4. Mobile Fixtures (Appium) - Class scope
@@ -204,16 +233,14 @@ def mobile_driver(request):
     from appium.options.android import UiAutomator2Options
     from data.mobile.mobile import MOBILE_CAPS, APPIUM_SERVER, TIMEOUT
 
-    ConfigManager.get_env_data()['android_sdk_path']
-
-    print("\n[SETUP] Launching Official Appium Server Driver...")
+    # תוקן: קריאה למשתנה שלא נשמר
+    # sdk_path = ConfigManager.get_env_data().get('android_sdk_path')
     
-    # טעינת ההגדרות דרך המחלקה הרשמית של אנדרואיד (UiAutomator2Options)
+    print("\n[SETUP] Launching Official Appium Server Driver...")
     options = UiAutomator2Options().load_capabilities(MOBILE_CAPS)
     
     driver = appium_webdriver.Remote(APPIUM_SERVER, options=options)
     driver.implicitly_wait(TIMEOUT)
-    # שיתוף ה-driver עם מחלקת הטסטים
     request.cls.driver = driver
 
     yield driver
@@ -222,7 +249,7 @@ def mobile_driver(request):
     driver.quit()
 
 # ==========================================
-# 5. Screenshot & Trace on Failure & AI
+# 5. Screenshot, Trace & AI on Failure
 # ==========================================
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -234,7 +261,7 @@ def pytest_runtest_makereport(item, call):
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         filename = f"{test_name}_{timestamp}"
 
-        # 1. Web screenshot + trace (הקוד המקורי והטוב שלך)
+        # 1. Web screenshot + trace
         if hasattr(item.cls, "page") and item.cls.page is not None:
             try:
                 page = item.cls.page
@@ -246,7 +273,7 @@ def pytest_runtest_makereport(item, call):
             if hasattr(item.cls, "context") and item.cls.context is not None:
                 try:
                     item.cls.context.tracing.stop(path=os.path.join(TRACES_DIR, f"{filename}.zip"))
-                    item.cls._trace_saved = True  # מסמן ל-trace_manager לא לעצור שוב
+                    item.cls._trace_saved = True  
                     print(f"[FAILURE] Trace saved: {filename}.zip")
                 except Exception as e:
                     print(f"[WARNING] Failed to save trace: {e}")
@@ -260,7 +287,7 @@ def pytest_runtest_makereport(item, call):
             except Exception as e:
                 print(f"\n[WARNING] Failed to capture mobile screenshot: {e}")
 
-        # 3. API / DB → Failure Log (txt עם Traceback מלא)
+        # 3. API / DB → Failure Log 
         else:
             try:
                 log_path = os.path.join(LOGS_DIR, f"{filename}_failure.txt")
@@ -274,33 +301,51 @@ def pytest_runtest_makereport(item, call):
                 print(f"[WARNING] Failed to save failure log: {e}")
 
         # ==========================================
-        # 3. AI 🤖
+        # 4. AI ERROR ANALYSIS 🤖
         # ==========================================
-        # בודק אם המשתמש ביקש להפעיל את ה-AI בהרצה הזו
-        # בודק האם לטסט הספציפי הזה יש את המרקר שלנו
-        if item.get_closest_marker("use_ai"):
-            error_message = str(call.excinfo.value) if call.excinfo else "Unknown error"
-            print(f"\n[AI Analysis] Analyzing failure in {test_name}... please wait...")            
+        is_global_ai_enabled = item.config.getoption("--ai-analysis")
+        has_ai_marker = item.get_closest_marker("use_ai") is not None
+        
+        if is_global_ai_enabled or has_ai_marker:
+            # תוקן: שימוש ב-longrepr כדי לתת למודל את כל הקונטקסט של השגיאה, לא רק את השורה האחרונה
+            full_traceback = str(report.longrepr)
+            print(f"\n[AI Analysis] Triggering Groq for failure in {test_name}... please wait...")            
+            
             try:
-                ai_explanation = get_ai_error_analysis(error_message)
+                ai_explanation = get_ai_error_analysis(full_traceback)
                 
                 print("\n============= AI ERROR ANALYSIS =============")
                 print(ai_explanation)
                 print("=============================================\n")
                 
-                # Attach AI insights directly to the test report
+                # סיווג באג מובנה
+                test_layer = "unknown"
+                if hasattr(item.cls, "page"):
+                    test_layer = "Web/UI"
+                elif hasattr(item.cls, "driver"):
+                    test_layer = "Mobile"
+                elif "api" in item.nodeid.lower():
+                    test_layer = "API"
+                elif "db" in item.nodeid.lower():
+                    test_layer = "Database"
+
+                from utils.ai_test_generator import AITestGenerator
+                classification = AITestGenerator.classify_bug(full_traceback, test_layer)
+
+                if isinstance(classification, dict) and "bug_type" in classification:
+                    print(f"\n[BUG CLASSIFICATION]")
+                    print(f"  Type:     {classification['bug_type']}")
+                    print(f"  Severity: {classification['severity']}")
+                    print(f"  Category: {classification['category']}")
+                    print(f"  Summary:  {classification['summary']}")
+                    print(f"  Fix:      {classification['suggested_fix']}")
+
+                classification_str = json.dumps(classification, indent=2, ensure_ascii=False) if isinstance(classification, dict) else str(classification)
+
                 allure.attach(
-                    body=f" Error Message:\n{error_message}\n\n🤖 AI Analysis:\n{ai_explanation}", 
-                    name="🤖 AI Failure Analysis", 
+                    body=f"=== Raw Error ===\n{full_traceback}\n\n=== 🤖 AI Analysis ===\n{ai_explanation}\n\n=== Bug Classification ===\n{classification_str}",
+                    name="🤖 AI Failure Analysis & Classification",
                     attachment_type=allure.attachment_type.TEXT
                 )
             except Exception as e:
                 print(f"[WARNING] AI Analysis failed to execute: {e}")
-
-
-def pytest_addoption(parser):
-    """מוסיף דגל מותאם אישית להרצת AI על שגיאות"""
-    parser.addoption(
-        "--ai-analysis", action="store_true", default=False, help="Run AI analysis on test failures"
-    )
-    

@@ -5,6 +5,7 @@ import requests
 from workflows.web.web_workflows_expense import WebWorkflows
 from extensions.api_actions import APIActions
 from extensions.api_verification import APIVerifications
+from extensions.web_verification import WebVerify
 from extensions.db_actions import DBActions
 from extensions.db_verifications import DBVerifications
 from page_objects.web.expense_tracker_page import ExpenseTrackerPage
@@ -17,7 +18,7 @@ from utils.common_ops import calc_performance
 @allure.epic("E2E Integration")
 @allure.feature("Web UI → API + DB")
 @pytest.mark.e2e
-@pytest.mark.usefixtures("web_setup", "db_setup_teardown")
+@pytest.mark.usefixtures("web_setup", "api_setup", "db_setup_teardown")
 class TestE2EWebApiDbExpenseTracker:
     """
     E2E test: creates a record via the Web UI, extracts displayed data from UI elements,
@@ -42,7 +43,7 @@ class TestE2EWebApiDbExpenseTracker:
         try:
             # ── STEP 1: Baseline count ───────────────────────────
             with allure.step("Step 1: Capture baseline count"):
-                initial_count = self.page.locator(ExpenseTrackerPage.expense_name_items).count()
+                initial_count = ExpenseTrackerPage.get_expenses_count(self.page)
 
             # ── STEP 2: Create expense on Web UI ─────────────────
             with allure.step(f"Step 2: Create expense '{expense_name}' on Web UI"):
@@ -53,10 +54,7 @@ class TestE2EWebApiDbExpenseTracker:
                     category=expense_category,
                     date=expense_date,
                 )
-                self.page.wait_for_function(
-                    f"document.querySelectorAll('{ExpenseTrackerPage.expense_name_items}').length > {initial_count}",
-                    timeout=5000,
-                )
+                WebVerify.verify_element_count(self.page, ExpenseTrackerPage.expense_name_items, initial_count + 1)
                 allure.attach(
                     self.page.screenshot(),
                     name="01_After_Web_Creation",
@@ -65,10 +63,11 @@ class TestE2EWebApiDbExpenseTracker:
 
             # ── STEP 3: Extract data from UI elements ────────────
             with allure.step("Step 3: Extract created record data from UI elements"):
-                ui_name = self.page.locator(ExpenseTrackerPage.expense_name_items).last.inner_text()
-                ui_amount_raw = self.page.locator(ExpenseTrackerPage.expense_amount_items).last.inner_text()
-                ui_date = self.page.locator(ExpenseTrackerPage.expense_date_items).last.inner_text()
-                ui_category = self.page.locator(ExpenseTrackerPage.expense_category_items).last.inner_text()
+                last_elements = ExpenseTrackerPage.get_last_expense_elements(self.page)
+                ui_name = last_elements["name"].inner_text()
+                ui_amount_raw = last_elements["amount"].inner_text()
+                ui_date = last_elements["date"].inner_text()
+                ui_category = last_elements["category"].inner_text()
 
                 # Parse amount: strip '$' prefix and convert to float
                 ui_amount = float(ui_amount_raw.replace("$", "").strip())
@@ -91,7 +90,7 @@ class TestE2EWebApiDbExpenseTracker:
                     "date": ui_date,
                     "category": ui_category,
                 }
-                api_response = APIActions.post(api_url, api_payload)
+                api_response = APIActions.post(self.session, api_url, api_payload)
                 APIVerifications.verify_status_code(api_response, 201)
                 api_id = api_response.json().get("id")
                 print(f"[API] Created record with ID: {api_id}")
@@ -104,7 +103,7 @@ class TestE2EWebApiDbExpenseTracker:
 
             # ── STEP 6: Verify API record ────────────────────────
             with allure.step("Step 6: Verify record exists in JSON server"):
-                get_response = APIActions.get(f"{api_url}/{api_id}")
+                get_response = APIActions.get(self.session, f"{api_url}/{api_id}")
                 APIVerifications.verify_status_code(get_response, 200)
                 api_data = get_response.json()
                 assert api_data["expense_name"] == ui_name, f"API name mismatch: {api_data['expense_name']} != {ui_name}"
@@ -135,7 +134,7 @@ class TestE2EWebApiDbExpenseTracker:
 
                     # Time API POST
                     t0 = time.time()
-                    resp = APIActions.post(api_url, {
+                    resp = APIActions.post(self.session, api_url, {
                         "expense_name": iter_name,
                         "amount": ui_amount,
                         "date": ui_date,

@@ -9,6 +9,7 @@ from config.config import ConfigManager
 
 @allure.epic("API Interface")
 @allure.feature("Expense Management API")
+@pytest.mark.api
 @pytest.mark.usefixtures("api_setup")
 class TestAPI:
     # ID is changes 
@@ -60,6 +61,8 @@ class TestAPI:
         if created_id:
             APIWorkflows.delete_expense(self.session, created_id)
 
+    @allure.title("API_04: Get Single Expense by ID (Status 200)")
+    @allure.description("GET a single expense by ID and verify status code")
     def test04_get_single_expense(self, smart_expense_id):
         response = APIWorkflows.get_expense_by_id(self.session, smart_expense_id)
         APIVerifications.verify_status_code(response, 200)

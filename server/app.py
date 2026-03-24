@@ -5,6 +5,7 @@ API calls actually write to/read from the configured database.
 """
 import os
 import sqlite3
+from datetime import datetime
 from flask import Flask, jsonify, request, abort
 
 try:
@@ -20,8 +21,18 @@ DB_PATH = os.path.join(PROJECT_ROOT, "data", "expense_test.db")
 
 
 def _get_db_type():
-    db_type = os.environ.get("DB_TYPE", "sqlite").lower()
-    return db_type
+    """Reads DB type from env var (priority) or config.json fallback."""
+    db_type = os.environ.get("DB_TYPE")
+    if db_type:
+        return db_type.lower()
+    try:
+        import json
+        config_path = os.path.join(PROJECT_ROOT, "config", "config.json")
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        return config.get("db_type", "sqlite").lower()
+    except Exception:
+        return "sqlite"
 
 
 def get_db():
@@ -105,6 +116,74 @@ def _fetchall(conn, sql, params=None):
         return conn.execute(sql, params or ()).fetchall()
 
 
+def validate_expense(data):
+    """מאמת את הנתונים ומחזיר רשימת שגיאות"""
+    errors = []
+
+    # expense_name validation
+    name = data.get("expense_name") or data.get("description") or ""
+    if not name or not str(name).strip():
+        errors.append("expense_name is required and cannot be empty or spaces-only")
+    elif len(str(name)) > 200:
+        errors.append(f"expense_name too long ({len(str(name))} chars, max 200)")
+
+    # amount validation
+    amount = data.get("amount")
+    if amount is None:
+        errors.append("amount is required")
+    else:
+        try:
+            amount_float = float(amount)
+            if amount_float < 0:
+                errors.append(f"amount cannot be negative ({amount_float})")
+            if amount_float == 0:
+                errors.append("amount cannot be zero")
+        except (ValueError, TypeError):
+            errors.append(f"amount must be numeric, got: {amount}")
+
+    # date validation
+    date = data.get("date", "")
+    if not date:
+        errors.append("date is required")
+    else:
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+        except ValueError:
+            errors.append(f"date must be YYYY-MM-DD format, got: {date}")
+
+    # category validation
+    valid_categories = ["Food", "Transportation", "Accommodation", "Education", "Fashion", "Other"]
+    category = data.get("category", "")
+    if not category:
+        errors.append("category is required")
+    elif category not in valid_categories:
+        errors.append(f"Invalid category '{category}'. Must be one of: {valid_categories}")
+
+    return errors
+
+
+@app.route("/health", methods=["GET"])
+def health():
+    """בדיקת בריאות השרת וחיבור ל-DB"""
+    db_status = "disconnected"
+    record_count = 0
+    try:
+        conn = get_db()
+        row = _fetchone(conn, "SELECT COUNT(*) as cnt FROM expenses")
+        record_count = row["cnt"] if isinstance(row, dict) else row[0]
+        conn.close()
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+
+    return jsonify({
+        "status": "ok",
+        "timestamp": datetime.now().isoformat(),
+        "database": db_status,
+        "record_count": record_count,
+    })
+
+
 def row_to_dict(row):
     if isinstance(row, dict):
         return row
@@ -142,6 +221,13 @@ def get_expense(expense_id):
 @app.route("/expenses", methods=["POST"])
 def create_expense():
     data = request.get_json(force=True)
+    if not data:
+        return jsonify({"error": "Request body is required"}), 400
+
+    errors = validate_expense(data)
+    if errors:
+        return jsonify({"error": "Validation failed", "details": errors}), 400
+
     conn = get_db()
     try:
         db_type = _get_db_type()
@@ -172,6 +258,13 @@ def create_expense():
 @app.route("/expenses/<int:expense_id>", methods=["PUT"])
 def update_expense(expense_id):
     data = request.get_json(force=True)
+    if not data:
+        return jsonify({"error": "Request body is required"}), 400
+
+    errors = validate_expense(data)
+    if errors:
+        return jsonify({"error": "Validation failed", "details": errors}), 400
+
     conn = get_db()
     try:
         sql = "UPDATE expenses SET expense_name=?, amount=?, date=?, category=? WHERE id=?"

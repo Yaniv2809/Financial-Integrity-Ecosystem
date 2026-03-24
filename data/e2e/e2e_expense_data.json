@@ -1,0 +1,4 @@
+[
+    {"test_id": "test01_negative", "expense_name": "E2E_Negative", "amount": "-50", "date": "2026-05-15", "category": "Education"},
+    {"test_id": "test02_overflow_name", "expense_name_length": 300, "amount": "100", "date": "2026-06-01", "category": "Food"}
+]

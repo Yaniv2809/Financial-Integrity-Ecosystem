@@ -3,6 +3,7 @@ import os
 
 class ConfigManager:
     CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     @staticmethod
     def get_config():
@@ -29,12 +30,16 @@ class ConfigManager:
 
     @staticmethod
     def get_db_path():
-        """קורא את נתיב מסד הנתונים מקובץ config.json"""
         config = ConfigManager.get_config()
-        return config.get("db_path")
-    
+        db_path = config.get("db_path")
+        if not os.path.isabs(db_path):
+            db_path = os.path.join(ConfigManager.PROJECT_ROOT, db_path)
+        return db_path
+
     @staticmethod
     def get_db_2_path():
-        """קורא את נתיב מסד הנתונים מקובץ config.json"""
         config = ConfigManager.get_config()
-        return config.get("db_2_path")
+        db_path = config.get("db_2_path")
+        if not os.path.isabs(db_path):
+            db_path = os.path.join(ConfigManager.PROJECT_ROOT, db_path)
+        return db_path

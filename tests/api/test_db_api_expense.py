@@ -10,6 +10,8 @@ from config.config import ConfigManager
 
 @allure.epic("API & DB Integration")
 @allure.feature("Cross-Layer Validation")
+@pytest.mark.db
+@pytest.mark.integration
 @pytest.mark.usefixtures("api_setup", "db_setup_teardown")
 class TestDBAPI:
     db_path = ConfigManager.get_db_path()
@@ -24,7 +26,7 @@ class TestDBAPI:
         expense_category = "Food"
 
         # 1. יצירה דרך API + אימות תגובה
-        response = APIWorkflows.create_expense(expense_name, expense_amount, expense_date, expense_category)
+        response = APIWorkflows.create_expense(self.session, expense_name, expense_amount, expense_date, expense_category)
         APIVerifications.verify_status_code(response, 201)
         created_id = response.json().get("id")
         assert created_id is not None, "API did not return an ID for the created expense"
@@ -40,14 +42,13 @@ class TestDBAPI:
         records = DBActions.execute_query(self.db_path, select_query, (expense_name,))
 
         DBVerifications.verify_record_count(records, 1)
-        record = records[0]
-        assert record[0] == expense_name, f"DB name mismatch: expected '{expense_name}', got '{record[0]}'"
-        assert record[1] == expense_amount, f"DB amount mismatch: expected {expense_amount}, got {record[1]}"
-        assert record[2] == expense_date, f"DB date mismatch: expected '{expense_date}', got '{record[2]}'"
-        assert record[3] == expense_category, f"DB category mismatch: expected '{expense_category}', got '{record[3]}'"
+        DBVerifications.verify_db_record_match(
+            actual_record=(records[0][0], records[0][1], records[0][3]),
+            expected_record=(expense_name, expense_amount, expense_category)
+        )
 
         # 4. Cleanup — מחיקה מ-API ומ-DB
-        APIWorkflows.delete_expense(created_id)
+        APIWorkflows.delete_expense(self.session, created_id)
         delete_query = "DELETE FROM expenses WHERE expense_name = ?"
         DBActions.execute_query(self.db_path, delete_query, (expense_name,))
 

@@ -11,6 +11,7 @@ from extensions.web_verification import WebVerify
 
 @allure.epic("Web UI Testing")
 @allure.feature("Expense Tracker Functionality")
+@pytest.mark.web
 @pytest.mark.usefixtures("web_setup")
 class TestWeb:
     

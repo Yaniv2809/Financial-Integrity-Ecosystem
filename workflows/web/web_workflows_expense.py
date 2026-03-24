@@ -84,7 +84,7 @@ class WebWorkflows:
             "alert": alert_received
         }
     
-    staticmethod
+    @staticmethod
     @allure.step("Simulate UI failure to trigger AI error analysis")
     def simulate_ui_failure_for_ai(page: Page):
         UIActions.click(

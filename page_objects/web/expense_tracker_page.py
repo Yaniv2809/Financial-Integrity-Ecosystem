@@ -22,6 +22,8 @@ class ExpenseTrackerPage:
     expense_category_items = ".expense-category"  # קטגוריות ההוצאות ברשימה
 
 
+    non_existent_ai_button = "#non-existent-button-for-ai-test"
+
 
     @staticmethod
     def get_last_expense_name(page):
@@ -40,3 +42,8 @@ class ExpenseTrackerPage:
             "date": last_item.locator(".expense-date"),
             "category": last_item.locator(".expense-category"),
         }
+    
+    @staticmethod
+    def get_expenses_count(page) -> int:
+        # במידת הצורך אפשר להוסיף כאן page.wait_for_selector כדי למנוע flakiness
+        return page.locator(ExpenseTrackerPage.expense_name_items).count()

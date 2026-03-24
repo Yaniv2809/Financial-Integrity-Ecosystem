@@ -1,0 +1,427 @@
+{
+  "expenses": [
+    {
+      "id": "6e52",
+      "expense_name": "Integrity_dc778aaf",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "baa9",
+      "expense_name": "Integrity_a69a1915",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "18d1",
+      "expense_name": "Integrity_715cfb68",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "cb11",
+      "expense_name": "Integrity_7bcf5cdb",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "0f5f",
+      "expense_name": "Integrity_185010af",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "83c7",
+      "expense_name": "Integrity_63feaa0b",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "e349",
+      "expense_name": "Integrity_26b92462",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "742a",
+      "expense_name": "Integrity_ddd69201",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "22b1",
+      "expense_name": "Integrity_3d3f35b8",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "41d9",
+      "expense_name": "Integrity_d47fd590",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "0a1e",
+      "expense_name": "Integrity_6da71ef7",
+      "amount": 150,
+      "date": "2026-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "d1bd",
+      "expense_name": "Integrity_Final_287b90",
+      "amount": 250,
+      "date": "2026-03-10",
+      "category": "Education"
+    },
+    {
+      "id": "9aa8",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "c790",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "a547",
+      "expense_name": "Integrity_Final_2d7155",
+      "amount": 250,
+      "date": "2026-03-10",
+      "category": "Education"
+    },
+    {
+      "id": "c49b",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "b532",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "7d63",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "a3bc",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "d514",
+      "expense_name": "API_to_DB_Test_7695",
+      "amount": [
+        15.815210175546921,
+        2
+      ],
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "cdd4",
+      "expense_name": "API_Course",
+      "amount": "1500",
+      "date": "2026-02-01",
+      "category": "Education"
+    },
+    {
+      "id": "0679",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "b53c",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "d193",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Food"
+    },
+    {
+      "id": "3e09",
+      "expense_name": "API_to_DB_Test",
+      "amount": 999,
+      "date": "2025-05-05",
+      "category": "Other"
+    },
+    {
+      "expense_name": "Update_Test_Modified",
+      "amount": 250,
+      "date": "2025-08-15",
+      "category": "Travel",
+      "id": "db59"
+    },
+    {
+      "id": "a7ef",
+      "expense_name": "E2E_Web2All_1773333343",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "(education)"
+    },
+    {
+      "id": "252d",
+      "expense_name": "E2E_Web2All_1773333416",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "(education)"
+    },
+    {
+      "id": "dcf4",
+      "expense_name": "E2E_Web2All_1773335867",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "698c",
+      "expense_name": "Perf_Test_1773335872_0",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "2bc7",
+      "expense_name": "Perf_Test_1773335872_1",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "b6d5",
+      "expense_name": "Perf_Test_1773335872_2",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "894c",
+      "expense_name": "Perf_Test_1773335872_3",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "21e3",
+      "expense_name": "Perf_Test_1773335872_4",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "68ad",
+      "expense_name": "Perf_Test_1773335872_5",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "f7e4",
+      "expense_name": "Perf_Test_1773335872_6",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "bba4",
+      "expense_name": "Perf_Test_1773335872_7",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "3797",
+      "expense_name": "Perf_Test_1773335872_8",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "62bc",
+      "expense_name": "Perf_Test_1773335872_9",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "c93f",
+      "expense_name": "E2E_Web2All_1773335988",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "42df",
+      "expense_name": "Perf_Test_1773335994_0",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "a20a",
+      "expense_name": "Perf_Test_1773335994_1",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "a630",
+      "expense_name": "Perf_Test_1773335994_2",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "4e82",
+      "expense_name": "Perf_Test_1773335994_3",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "d803",
+      "expense_name": "Perf_Test_1773335994_4",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "12ea",
+      "expense_name": "Perf_Test_1773335994_5",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "031b",
+      "expense_name": "Perf_Test_1773335994_6",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "3fe5",
+      "expense_name": "Perf_Test_1773335994_7",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "f94d",
+      "expense_name": "Perf_Test_1773335994_8",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "2a1f",
+      "expense_name": "Perf_Test_1773335994_9",
+      "amount": 555,
+      "date": "2026-05-15",
+      "category": "education"
+    },
+    {
+      "id": "b238",
+      "expense_name": "API_Course",
+      "amount": "1500",
+      "date": "2026-02-01",
+      "category": "Education"
+    },
+    {
+      "id": "cedb",
+      "expense_name": "DDT_Coffee1",
+      "amount": "15",
+      "date": "2026-03-01",
+      "category": "Food"
+    },
+    {
+      "id": "7d6e",
+      "expense_name": "DDT_Flight Ticket2",
+      "amount": "1500",
+      "date": "2026-03-02",
+      "category": "Transportation"
+    },
+    {
+      "id": "76ac",
+      "expense_name": "DDT_Hotel_Berlin3",
+      "amount": "850.50",
+      "date": "2026-03-03",
+      "category": "Transportation"
+    },
+    {
+      "id": "9b5a",
+      "expense_name": "DDT_Car Rental4",
+      "amount": "300",
+      "date": "2026-03-04",
+      "category": "Transportation"
+    },
+    {
+      "id": "a954",
+      "expense_name": "DDT_Conference Fee5",
+      "amount": "200",
+      "date": "2026-03-05",
+      "category": "Education"
+    },
+    {
+      "id": "5653",
+      "expense_name": "",
+      "amount": "",
+      "date": "",
+      "category": ""
+    },
+    {
+      "id": "5025",
+      "expense_name": "",
+      "amount": "",
+      "date": "",
+      "category": ""
+    },
+    {
+      "id": "b6f0",
+      "expense_name": "",
+      "amount": "",
+      "date": "",
+      "category": ""
+    },
+    {
+      "id": "4b46",
+      "expense_name": "API_Course",
+      "amount": "1500",
+      "date": "2026-02-01",
+      "category": "Education"
+    }
+  ]
+}

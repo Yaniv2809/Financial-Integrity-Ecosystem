@@ -17,13 +17,18 @@ class UIActions:
         page.goto(url)
 
     @staticmethod
-    @allure.step("UI Action: Clicking on element: '{selector}'")
-    def click(page, selector: str, is_last: bool = False):
-        log.info(f"UI Action: Clicking on element with selector: '{selector}'")
+    @allure.step("Click on element: '{selector}'")
+    def click(page, selector: str, is_last: bool = False, **kwargs):
+        """
+        Clicks an element based on a selector.
+        Accepts any valid Playwright click arguments via **kwargs (e.g., timeout=2000, force=True).
+        """
+        locator = page.locator(selector)
+        
         if is_last:
-            page.locator(selector).last.click()
+            locator.last.click(**kwargs)
         else:
-            page.locator(selector).click()
+            locator.click(**kwargs)
 
     @staticmethod
     @allure.step("Fill text: '{text}' into element: {selector}")

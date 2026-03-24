@@ -1,0 +1,92 @@
+[
+    {
+        "test_id": "test02",
+        "name": "Business Lunch",
+        "amount": "85",
+        "category": "Food"
+    },
+    {
+        "test_id": "test03",
+        "name": "DDT_Coffee",
+        "amount": "15",
+        "category": "Food"
+    },
+    {
+        "test_id": "test03",
+        "name": "DDT_Flight Ticket",
+        "amount": "1500",
+        "category": "Transportation"
+    },
+    {
+        "test_id": "test03",
+        "name": "DDT_Hotel Berlin",
+        "amount": "850.50",
+        "category": "Accommodation"
+    },
+    {
+        "test_id": "test03",
+        "name": "DDT_Conference Fee",
+        "amount": "200",
+        "category": "Education"
+    },
+    {
+        "test_id": "test04",
+        "name": "Full Flow Expense",
+        "amount": "320.75",
+        "category": "Transportation"
+    },
+    {
+        "test_id": "test06",
+        "name": "!@#$%^&*()_+=",
+        "amount": "100",
+        "category": "Food"
+    },
+    {
+        "test_id": "test07",
+        "name": "Negative Amount Test",
+        "amount": "-50",
+        "category": "Food"
+    },
+    {
+        "test_id": "test08",
+        "name": "BoundaryTestNameWithExactlyOneHundredCharactersForTestingPurposesInTheExpenseTrackerMobileApplication!",
+        "amount": "10",
+        "category": "Food"
+    },
+    {
+        "test_id": "test09",
+        "name": "Large Amount",
+        "amount": "9999999.99",
+        "category": "Transportation"
+    },
+    {
+        "test_id": "test10",
+        "name": "Zero Amount",
+        "amount": "0",
+        "category": "Food"
+    },
+    {
+        "test_id": "test11",
+        "name": "Persistence Test",
+        "amount": "250",
+        "category": "Education"
+    },
+    {
+        "test_id": "test12",
+        "name": "Keyboard Test",
+        "amount": "75",
+        "category": "Food"
+    },
+    {
+        "test_id": "test13",
+        "name": "Rotation Test",
+        "amount": "60",
+        "category": "Transportation"
+    },
+    {
+        "test_id": "test14",
+        "name": "Temp Expense",
+        "amount": "99",
+        "category": "Food"
+    }
+]
