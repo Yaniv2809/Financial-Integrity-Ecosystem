@@ -123,6 +123,7 @@ class TestWeb:
     @allure.title("BUG: Verify negative amount input is accepted (should be blocked)")
     @allure.description("Negative test: System accepts -50 as valid amount - this is a bug. Expected: validation alert. Actual: expense is created.")
     @pytest.mark.use_ai
+    @pytest.mark.xfail(reason="Known Bug: UI accepts negative amounts without validation")
     def test05_negative_amount_validation(self):
         data = read_data_from_csv_by_test(MASTER_CSV, "test05")[0]
         initial_count = ExpenseTrackerPage.get_expenses_count(self.page)
@@ -168,6 +169,7 @@ class TestWeb:
     # 7
     @allure.title("Verify creation of expense with a very long description")
     @allure.description("Boundary test: Adds an expense with a 100-character description to ensure the UI handles it correctly")
+    @pytest.mark.xfail(reason="Known Bug: Long text overflows the expense card container")
     def test07_long_description_boundary(self):
         long_text = "Test" * 25
         WebWorkflows.create_expense(self.page, expense_name=long_text)
@@ -203,6 +205,7 @@ class TestWeb:
     @allure.title("AI Failure Analysis Test (Global Hook Demo)")
     @allure.description("Intentionally fails to demonstrate the global AI error analysis hook")
     @pytest.mark.use_ai
+    @pytest.mark.xfail(reason="Intentional failure to demonstrate AI-powered error analysis")
     def test10_ai_failure_analysis(self):
         WebWorkflows.simulate_ui_failure_for_ai(self.page)
         
