@@ -1,0 +1,36 @@
+{
+    "env": "qa",
+    "active_env": "qa",
+    "environments": {
+        "qa": {
+            "web_url": "https://atidcollege.co.il/Xamples/expense-tracker/",
+            "api_url": "http://localhost:3000/expenses",
+            "mobile_apk_path": "data/mobile/atid-expense-travel.apk",
+            "currency_api_url": "https://open.er-api.com/v6/latest/USD",
+            "json_server_command": "json-server --watch db.json --port 3000",
+            "flask_api_url": "http://localhost:5000/expenses",
+            "android_sdk_path": "",
+            "ai_url": "https://api.groq.com/openai/v1/chat/completions"
+        }
+    },
+    "db_path": "data/expense_test.db",
+    "db_2_path": "data/expense_db.db",
+    "browser": "chromium",
+    "headless": false,
+    "timeout": 5000,
+    "long_timeout": 10000,
+    
+    "db_type": "mysql",
+    "mysql": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "test_user",
+        "password": "test_password",
+        "database": "expense_test_db"
+    },
+    "performance": {
+        "max_avg_creation_time": 2.0,
+        "max_p95_time": 3.0,
+        "max_degradation_pct": 50
+    }
+}
