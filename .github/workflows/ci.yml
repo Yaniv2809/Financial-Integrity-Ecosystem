@@ -1,0 +1,113 @@
+name: Automated Tests CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  test-and-report:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: expense_test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 2. Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: 3. Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 4. Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 5. Install Playwright Browsers
+        run: playwright install chromium --with-deps
+
+      - name: 6. Initialize MySQL Schema
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h 127.0.0.1 -u test_user -ptest_password expense_test_db < data/init_mysql.sql
+          echo "MySQL schema initialized!"
+
+      - name: 7. Install & Start JSON Server
+        run: |
+          npm install -g json-server
+          json-server --watch json-server/db.json --port 3000 &
+
+      - name: 8. Start Flask Server
+        env:
+          DB_TYPE: mysql
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          MYSQL_DATABASE: expense_test_db
+        run: |
+          python server/app.py &
+
+      - name: 9. Wait for Servers to be Ready
+        run: |
+          curl --retry 10 --retry-delay 2 --retry-connrefused http://localhost:3000/expenses > /dev/null 2>&1
+          curl --retry 10 --retry-delay 2 --retry-connrefused http://localhost:5000/expenses > /dev/null 2>&1
+          echo "All servers are up and running!"
+
+      - name: 10. Run Tests (exclude Mobile)
+        env:
+          CI: 'true'
+          DB_TYPE: mysql
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          MYSQL_DATABASE: expense_test_db
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          pytest -m "not mobile" --alluredir=allure-results --ai-analysis
+
+      - name: 11. Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+          keep_reports: 20
+
+      - name: 12. Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-history
