@@ -1,5 +1,7 @@
 # Financial Integrity Ecosystem
 
+[![gitcgr](https://gitcgr.com/badge/Yaniv2809/Financial-Integrity-Ecosystem.svg)](https://gitcgr.com/Yaniv2809/Financial-Integrity-Ecosystem)
+
 **A multi-layered End-to-End test automation framework for a Financial Expense Tracker application, built to validate Data Integrity across Web, API, Mobile, and Database layers.**
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
