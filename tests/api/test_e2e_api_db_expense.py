@@ -10,7 +10,7 @@ from config.config import ConfigManager
 
 
 def _flask_url():
-    """מחזיר את ה-URL של Flask server (port 5000) שכותב לאותו SQLite."""
+    """Returns the URL of the Flask server (port 5000) that writes to the same SQLite."""
     return ConfigManager.get_env_data()["flask_api_url"]
 
 
@@ -20,10 +20,11 @@ def _flask_url():
 @pytest.mark.usefixtures("api_setup")
 class TestE2EApiDb:
     """
-    טסטי אינטגרציה אמיתיים בין Flask API ל-SQLite.
-    Flask server (port 5000) כותב וקורא ישירות מ-expense_db.db —
-    לא json-server (port 3000) שמשתמש ב-db.json נפרד.
-    כל טסט עצמאי עם cleanup מובנה.
+    Real integration tests between Flask API and SQLite.
+    Flask server (port 5000) writes and reads directly from expense_db.db —
+    not json-server (port 3000) which uses a separate db.json.
+    Each test is independent with built-in cleanup.
+
     """
     db_path = ConfigManager.get_db_path()
 
@@ -32,8 +33,8 @@ class TestE2EApiDb:
     # ============================================================
     @allure.title("E2E_01: API → DB | POST creates record in SQLite")
     @allure.description(
-        "יוצר הוצאה דרך ה-API ומוודא שהרשומה הופיעה ב-SQLite ללא כתיבה ישירה לDB. "
-        "מאמת שה-API אכן כותב לשכבת הנתונים."
+        "Creates an output via the API and verifies that the record appeared in SQLite without writing directly to the DB. "
+"Verifies that the API is actually writing to the data layer."
     )
     def test01_api_create_reflects_in_db(self):
         expense_name = f"E2E_API_to_DB_{random.randint(1000, 9999)}"
@@ -43,7 +44,7 @@ class TestE2EApiDb:
         created_id = None
 
         try:
-            # שלב 1: יצירה דרך Flask API בלבד
+            # Step 1: Create via Flask API only
             response = requests.post(_flask_url(), json={
                 "expense_name": expense_name, "amount": expense_amount,
                 "date": expense_date, "category": expense_category
@@ -52,14 +53,14 @@ class TestE2EApiDb:
             created_id = response.json().get("id")
             assert created_id is not None, "API did not return an ID for the created expense"
 
-            # שלב 2: שליפה ישירה מה-DB לפי ID שחזר מה-API
+            # Step 2: Direct retrieval from the DB by ID returned from the API
             records = DBActions.execute_query(
                 self.db_path,
                 "SELECT expense_name, amount, category FROM expenses WHERE id = ?",
                 (created_id,)
             )
 
-            # שלב 3: אימות שהרשומה קיימת ב-DB עם הנתונים הנכונים
+            # Step 3: Verify that the record exists in the DB with the correct data
             DBVerifications.verify_record_count(records, 1)
             DBVerifications.verify_db_record_match(
                 actual_record=(records[0][0], records[0][1], records[0][2]),
@@ -72,12 +73,12 @@ class TestE2EApiDb:
                 requests.delete(f"{_flask_url()}/{created_id}")
 
     # ============================================================
-    # E2E_02: INSERT ישיר ל-DB → רשומה נגישה דרך ה-API
+    # E2E_02: Direct INSERT to DB → Record accessible via API
     # ============================================================
     @allure.title("E2E_02: DB → API | INSERT in SQLite is readable via GET")
     @allure.description(
-        "מזריק רשומה ישירות ל-SQLite ומוודא שה-API מחזיר אותה. "
-        "מאמת שה-API קורא את הנתונים מ-DB בצורה נכונה."
+        "Injects a record directly into SQLite and verifies that the API returns it. "
+"Verifies that the API reads the data from the DB correctly."
     )
     def test02_db_insert_reflects_in_api(self):
         expense_name = f"E2E_DB_to_API_{random.randint(1000, 9999)}"
@@ -86,18 +87,18 @@ class TestE2EApiDb:
         expense_category = "Transportation"
 
         try:
-            # שלב 1: הזרקה ישירה ל-DB ללא שימוש ב-API
+            # Step 1: Direct injection into the DB without using the API
             DBActions.execute_query(
                 self.db_path,
                 "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)",
                 (expense_name, expense_amount, expense_date, expense_category)
             )
 
-            # שלב 2: שליפת כל ההוצאות דרך Flask API
+            # Step 2: Retrieving all expenses via Flask API
             response = requests.get(_flask_url())
             APIVerifications.verify_status_code(response, 200)
 
-            # שלב 3: אימות שהרשומה שהוזרקה נמצאת בתגובת ה-API
+            # Step 3: Verify that the inserted record is returned by the API
             expenses = response.json()
             matching = [e for e in expenses if e.get("expense_name") == expense_name]
 
@@ -115,12 +116,12 @@ class TestE2EApiDb:
             )
 
     # ============================================================
-    # E2E_03: PUT דרך API → שינוי נשמר ב-DB
+    # E2E_03: PUT via API → Change saved in DB
     # ============================================================
     @allure.title("E2E_03: API → DB | PUT updates record in SQLite")
     @allure.description(
-        "מעדכן הוצאה קיימת דרך ה-API ומוודא שהשינוי נשמר ב-SQLite. "
-        "מאמת שעדכון API מסתנכרן לשכבת הנתונים."
+        "Updates an existing expense via the API and verifies that the change is saved in SQLite. "
+        "Verifies that the API update is synchronized with the data layer."
     )
     def test03_api_update_reflects_in_db(self):
         original_name = f"E2E_Pre_Update_{random.randint(1000, 9999)}"
@@ -128,7 +129,7 @@ class TestE2EApiDb:
         created_id = None
 
         try:
-            # שלב 1: יצירת הרשומה המקורית דרך Flask
+            # Step 1: Create the original record via Flask
             response = requests.post(_flask_url(), json={
                 "expense_name": original_name, "amount": 100.0,
                 "date": "2026-01-01", "category": "Food"
@@ -136,14 +137,14 @@ class TestE2EApiDb:
             APIVerifications.verify_status_code(response, 201)
             created_id = response.json().get("id")
 
-            # שלב 2: עדכון דרך Flask API
+            # Step 2: Update via Flask API
             update_response = requests.put(f"{_flask_url()}/{created_id}", json={
                 "expense_name": updated_name, "amount": 200.0,
                 "date": "2026-03-01", "category": "Fashion"
             })
             APIVerifications.verify_status_code(update_response, 200)
 
-            # שלב 3: שליפה ישירה מ-DB ואימות שהעדכון נשמר
+            # Step 3: Direct retrieval from the DB and verify the update
             records = DBActions.execute_query(
                 self.db_path,
                 "SELECT expense_name, amount, category FROM expenses WHERE id = ?",
@@ -161,17 +162,17 @@ class TestE2EApiDb:
                 requests.delete(f"{_flask_url()}/{created_id}")
 
     # ============================================================
-    # E2E_04: DELETE דרך API → רשומה נמחקת מה-DB
+    # E2E_04: DELETE via API → Record is deleted from the DB
     # ============================================================
     @allure.title("E2E_04: API → DB | DELETE removes record from SQLite")
     @allure.description(
-        "מוחק הוצאה דרך ה-API ומוודא שהרשומה נמחקה מ-SQLite. "
-        "מאמת שמחיקת API מסתנכרנת לשכבת הנתונים."
+        "Deletes an expense via the API and verifies that the record is removed from SQLite. "
+        "Verifies that the API delete is synchronized with the data layer."
     )
     def test04_api_delete_reflects_in_db(self):
         expense_name = f"E2E_Delete_Test_{random.randint(1000, 9999)}"
 
-        # שלב 1: יצירה דרך Flask
+        # Step 1: Create via Flask
         response = requests.post(_flask_url(), json={
             "expense_name": expense_name, "amount": 75.0,
             "date": "2026-01-10", "category": "Accommodation"
@@ -179,11 +180,11 @@ class TestE2EApiDb:
         APIVerifications.verify_status_code(response, 201)
         created_id = response.json().get("id")
 
-        # שלב 2: מחיקה דרך Flask API
+        # Step 2: Delete via Flask API
         delete_response = requests.delete(f"{_flask_url()}/{created_id}")
         APIVerifications.verify_status_code(delete_response, 200)
 
-        # שלב 3: אימות ישיר ב-DB שהרשומה לא קיימת יותר
+        # Step 3: Direct verification in the DB that the record no longer exists
         records = DBActions.execute_query(
             self.db_path,
             "SELECT id FROM expenses WHERE id = ?",
@@ -196,29 +197,29 @@ class TestE2EApiDb:
     # ============================================================
     @allure.title("E2E_05: API & DB Data Integrity: Set Theory & ACID")
     @allure.description(
-        "מוודא שסך ההוצאות עודכן כראוי, "
-        "ושניתן לבודד את הרשומה החדשה באמצעות תורת הקבוצות (Set Difference)."
+        "Verifies that the total expenses are updated correctly, "
+        "and that the new record can be isolated using set theory (Set Difference)."
     )
     def test05_data_integrity_with_set_theory(self):
         expense_name = "Integrity_Check_Expense"
         expense_amount = 100
 
         # ==========================================
-        # PRE-CONDITION: שמירת המצב הקיים ב-DB
+        # PRE-CONDITION: Saving the current state in the DB
         # ==========================================
 
-        # א. סך כל ההוצאות הקיים
+        # A. Total existing expenses (for ACID consistency check)
         sum_query = "SELECT SUM(amount) FROM expenses"
         initial_sum_result = DBActions.execute_query(self.db_path, sum_query)
         initial_total = initial_sum_result[0][0] if (initial_sum_result and initial_sum_result[0][0] is not None) else 0.0
 
-        # ב. קבוצת כל שמות ההוצאות הקיימות (Set A)
+        # B. Set of all existing expense names (Set A)
         all_names_query = "SELECT expense_name FROM expenses"
         initial_records = DBActions.execute_query(self.db_path, all_names_query)
         initial_set = set([str(row[0]) for row in initial_records])
 
         # ==========================================
-        # ACTION: יצירת הוצאה דרך Flask API
+        # ACTION: Create an expense via Flask API
         # ==========================================
         response = requests.post(_flask_url(), json={
             "expense_name": expense_name, "amount": expense_amount,
@@ -227,7 +228,7 @@ class TestE2EApiDb:
         APIVerifications.verify_status_code(response, 201)
 
         # ==========================================
-        # POST-CONDITION: המצב החדש ב-DB (Set B)
+        # POST-CONDITION: The new state in the DB (Set B)
         # ==========================================
         final_sum_result = DBActions.execute_query(self.db_path, sum_query)
         final_total = final_sum_result[0][0]
@@ -239,17 +240,17 @@ class TestE2EApiDb:
         # VALIDATIONS: Data integrity set theory
         # ==========================================
         try:
-            # 1. ולידציה מתמטית (ACID - Consistency)
+            # 1. Mathematical validation (ACID - Consistency)
             expected_total = initial_total + expense_amount
             assert final_total == expected_total, \
                 f"DB Math Error! Expected {expected_total}, Got {final_total}"
 
-            # 2. Set Difference: B - A = בדיוק רשומה אחת
+            # 2. Set Difference: B - A = Exactly one record
             newly_added_records = final_set - initial_set
             assert len(newly_added_records) == 1, \
                 f"Set Error! Expected 1 new record, got {len(newly_added_records)}"
 
-            # 3. הרשומה שנוספה היא אכן זו שיצרנו
+            # 3. The added record is indeed the one we created.
             isolated_record = newly_added_records.pop()
             assert isolated_record == expense_name, \
                 f"Mismatch! Expected '{expense_name}', Got '{isolated_record}'"
