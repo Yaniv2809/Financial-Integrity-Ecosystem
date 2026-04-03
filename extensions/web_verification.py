@@ -3,6 +3,8 @@ from smart_assertions import soft_assert, verify_expectations
 import allure
 import re
 
+from page_objects.web.expense_tracker_page import ExpenseTrackerPage
+
 class WebVerify:
     
     @staticmethod    
@@ -137,3 +139,28 @@ class WebVerify:
     def soft_all():
         """Raises all collected assertion errors at once."""
         verify_expectations()
+
+    @staticmethod
+    def get_elements_count(page: Page, selector: str) -> int:
+        return page.locator(selector).count()
+
+    @staticmethod
+    @allure.step("Verify expense '{expense_name}' is visible in the list")
+    def verify_expense_row_visible(page: Page, expense_name: str):
+        row = page.locator(ExpenseTrackerPage.expense_list).locator("li").filter(has_text=expense_name)
+        expect(row).to_be_visible()
+
+    @staticmethod
+    @allure.step("Verify expense '{expense_name}' is deleted (hidden)")
+    def verify_expense_row_hidden(page: Page, expense_name: str):
+        row = page.locator(ExpenseTrackerPage.expense_list).locator("li").filter(has_text=expense_name)
+        expect(row).not_to_be_visible()
+
+    @staticmethod
+    @allure.step("Verify row details for expense: {expense_name}")
+    def verify_expense_row_details(page: Page, expense_name: str, amount: str, date: str, category: str):
+        row = page.locator(ExpenseTrackerPage.expense_list).locator("li").filter(has_text=expense_name)
+        
+        expect(row.locator(ExpenseTrackerPage.expense_amount_items)).to_contain_text(amount)
+        expect(row.locator(ExpenseTrackerPage.expense_date_items)).to_contain_text(date)
+        expect(row.locator(ExpenseTrackerPage.expense_category_items)).to_contain_text(category.lower())

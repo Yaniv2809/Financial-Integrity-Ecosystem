@@ -92,3 +92,9 @@ class WebWorkflows:
             selector=ExpenseTrackerPage.non_existent_ai_button, 
             timeout=2000
         )
+
+    @staticmethod
+    @allure.step("Delete expense by name: {expense_name}")
+    def delete_expense_by_name(page: Page, expense_name: str):
+        row = page.locator(ExpenseTrackerPage.expense_list).locator("li").filter(has_text=expense_name)
+        row.locator("button").click(timeout=3000)
