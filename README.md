@@ -137,14 +137,39 @@ assert len(isolated_record) == 1     # Exactly one new record
 
 ---
 
-## Getting Started
+## Quick Start with Docker
+
+Run the entire test suite (API + Web + DB + E2E) with a single command — no manual setup required:
+
+```bash
+git clone https://github.com/YanivMetuku/Financial-Integrity-Ecosystem.git
+cd Financial-Integrity-Ecosystem
+docker-compose up --build
+```
+
+This spins up MySQL 8.0, JSON Server, Flask API, and Playwright headless — then runs all 37 non-mobile tests automatically.
+
+```
+[1/5] Waiting for MySQL...        ✓
+[2/5] Starting JSON Server...     ✓
+[3/5] Starting Flask Server...    ✓
+[4/5] Waiting for servers...      ✓
+[5/5] Running tests...
+========================= 34 passed, 3 xfailed, 16 deselected =========================
+```
+
+To clean up: `docker-compose down -v`
+
+---
+
+## Getting Started (Manual Setup)
 
 ### Prerequisites
 
 - Python 3.10+
 - Node.js 18+ (for JSON Server)
-- Docker Desktop (for MySQL)
-- Appium 2.x + UiAutomator2 driver (for mobile tests)
+- Docker Desktop (for MySQL, or for full Docker execution)
+- Appium 2.x + UiAutomator2 driver (for mobile tests only)
 - Allure CLI (for report viewing)
 
 ### Installation
@@ -274,8 +299,9 @@ Financial-Integrity-Ecosystem/
 │   └── ai_test_generator.py         # AI test case generator
 ├── conftest.py                      # Pytest fixtures (all layers)
 ├── pytest.ini                       # Pytest configuration & markers
-├── docker-compose.yml               # MySQL + app services
-├── Dockerfile                       # Multi-stage Docker build
+├── docker-compose.yml               # MySQL + app orchestration
+├── Dockerfile                       # Container build (Python + Node + Playwright)
+├── docker-entrypoint.sh             # Docker startup script (servers + tests)
 ├── requirements.txt                 # Python dependencies
 └── .env.example                     # Environment variable template
 ```
@@ -296,8 +322,7 @@ Every test is decorated with `@allure.title`, `@allure.description`, and `@allur
 
 ## Contributor
 
-**Yaniv Metuku** — Solo developer. Full design, architecture, implementation, and execution across all layers.
-
+**Yaniv Metuku** ([@Yaniv2809](https://github.com/Yaniv2809)) — Solo developer. Full design, architecture, implementation, and execution across all layers.
 ---
 
 *Built for true End-to-End Quality Assurance — where data integrity matters.*
