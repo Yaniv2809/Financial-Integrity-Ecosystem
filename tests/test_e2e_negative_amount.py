@@ -22,6 +22,7 @@ class TestE2ENegativeAmount:
     """
     db_path = ConfigManager.get_db_path()
 
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("E2E Negative: Web UI accepts negative amount → MySQL blocks INSERT")
     @allure.description(
         "Creates an expense with a negative amount (-50) on the Web UI. "
@@ -116,6 +117,7 @@ class TestE2ENegativeAmount:
             DBVerifications.verify_record_count(records, expected_count=0)
             print("[DB VERIFY] Confirmed: No record with negative amount in MySQL")
 
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("E2E Boundary: 300-char expense name exceeds MySQL VARCHAR(255)")
     @allure.description(
         "Creates an expense with a 300-character name via Web UI. "

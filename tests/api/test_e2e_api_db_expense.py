@@ -31,6 +31,7 @@ class TestE2EApiDb:
     # ============================================================
     # E2E_01: POST דרך API → רשומה מופיעה ב-DB
     # ============================================================
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("E2E_01: API → DB | POST creates record in SQLite")
     @allure.description(
         "Creates an output via the API and verifies that the record appeared in SQLite without writing directly to the DB. "
@@ -75,6 +76,7 @@ class TestE2EApiDb:
     # ============================================================
     # E2E_02: Direct INSERT to DB → Record accessible via API
     # ============================================================
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("E2E_02: DB → API | INSERT in SQLite is readable via GET")
     @allure.description(
         "Injects a record directly into SQLite and verifies that the API returns it. "
@@ -118,6 +120,7 @@ class TestE2EApiDb:
     # ============================================================
     # E2E_03: PUT via API → Change saved in DB
     # ============================================================
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("E2E_03: API → DB | PUT updates record in SQLite")
     @allure.description(
         "Updates an existing expense via the API and verifies that the change is saved in SQLite. "
@@ -164,6 +167,7 @@ class TestE2EApiDb:
     # ============================================================
     # E2E_04: DELETE via API → Record is deleted from the DB
     # ============================================================
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("E2E_04: API → DB | DELETE removes record from SQLite")
     @allure.description(
         "Deletes an expense via the API and verifies that the record is removed from SQLite. "
@@ -195,6 +199,7 @@ class TestE2EApiDb:
     # ============================================================
     # E2E_05: Data Integrity — Set Theory & ACID
     # ============================================================
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("E2E_05: API & DB Data Integrity: Set Theory & ACID")
     @allure.description(
         "Verifies that the total expenses are updated correctly, "

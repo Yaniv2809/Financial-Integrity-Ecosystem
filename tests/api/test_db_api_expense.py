@@ -15,6 +15,7 @@ from config.config import ConfigManager
 @pytest.mark.usefixtures("api_setup", "db_setup_teardown")
 class TestDBAPI:
     db_path = ConfigManager.get_db_path()
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("API → DB: Create expense via API and verify in SQLite")
     @allure.description("Creates an expense via API, simulates backend write to SQLite, "
                         "verifies data integrity across layers, and cleans up.")
@@ -25,7 +26,7 @@ class TestDBAPI:
         expense_date = "2025-05-05"
         expense_category = "Food"
 
-        # 1. יצירה דרך API + אימות תגובה
+        # 1. Creation via API + response verification
         response = APIWorkflows.create_expense(self.session, expense_name, expense_amount, expense_date, expense_category)
         APIVerifications.verify_status_code(response, 201)
         created_id = response.json().get("id")
@@ -33,11 +34,11 @@ class TestDBAPI:
         APIVerifications.verify_response_value(response, "expense_name", expense_name)
         APIVerifications.verify_response_value(response, "amount", expense_amount)
 
-        # 2. סימולציית Backend — כתיבה ל-SQLite
+        # 2. Backend simulation — writing to SQLite
         insert_query = "INSERT INTO expenses (expense_name, amount, date, category) VALUES (?, ?, ?, ?)"
         DBActions.execute_query(self.db_path, insert_query, (expense_name, expense_amount, expense_date, expense_category))
 
-        # 3. אימות ב-DB — הרשומה קיימת עם הנתונים הנכונים
+        # 3. DB verification — record exists with correct data
         select_query = "SELECT expense_name, amount, date, category FROM expenses WHERE expense_name = ?"
         records = DBActions.execute_query(self.db_path, select_query, (expense_name,))
 
@@ -47,11 +48,11 @@ class TestDBAPI:
             expected_record=(expense_name, expense_amount, expense_category)
         )
 
-        # 4. Cleanup — מחיקה מ-API ומ-DB
+        # 4. Cleanup — deletion from API and DB
         APIWorkflows.delete_expense(self.session, created_id)
         delete_query = "DELETE FROM expenses WHERE expense_name = ?"
         DBActions.execute_query(self.db_path, delete_query, (expense_name,))
 
-        # 5. אימות שהניקוי עבד — הרשומה לא קיימת יותר
+        # 5. Verification that cleanup worked — the record no longer exists
         records_after = DBActions.execute_query(self.db_path, select_query, (expense_name,))
         DBVerifications.verify_record_count(records_after, 0)

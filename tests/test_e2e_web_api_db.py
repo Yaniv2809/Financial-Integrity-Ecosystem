@@ -25,6 +25,7 @@ class TestE2EWebApiDbExpenseTracker:
     then simultaneously inserts it into the JSON server (api_url) and SQLite DB.
     """
     db_path = ConfigManager.get_db_path()
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("E2E: Web UI → Extract Data → Insert to API + DB")
     @allure.description(
         "Creates an expense on the web UI, reads it back from the DOM elements, "

@@ -16,6 +16,7 @@ from extensions.web_verification import WebVerify
 class TestWeb:
     
     # 1
+    @allure.severity(allure.severity_level.BLOCKER)
     @allure.title("Create a new expense via Web UI")
     @allure.description("This test verifies that a new expense can be added to the tracker")
     def test01_create_new_expense_web(self):
@@ -41,6 +42,7 @@ class TestWeb:
         WebVerify.contain_text(self.page, category_selector, str(data["category"]).lower())
     
     # 2
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Create multiple expenses via DDT")
     @allure.description("This test uses Data-Driven Testing to add several expenses, reading from an external CSV file")
     @pytest.mark.parametrize("expense_data", read_data_from_csv_by_test(MASTER_CSV, "test02"))
@@ -65,6 +67,7 @@ class TestWeb:
         WebVerify.contain_text(self.page, category_selector, expense_data["category"].lower())
     
     # 3
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Verify expense list count")
     @allure.description("This test verifies that adding new expenses properly increases the total number of items in the DOM")
     def test03_verify_expense_list_count(self):
@@ -89,6 +92,7 @@ class TestWeb:
         )
 
     # 4
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Verify expense creation with real-time API conversion")
     @allure.description("Fetches real-time EUR to USD conversion rate via API, calculates the expense, and adds it")
     def test04_verify_expense_with_api_rate(self):
@@ -120,6 +124,7 @@ class TestWeb:
         WebVerify.contain_text(self.page, amount_selector, f"${calculated_usd}")
 
     # 5
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("BUG: Verify negative amount input is accepted (should be blocked)")
     @allure.description("Negative test: System accepts -50 as valid amount - this is a bug. Expected: validation alert. Actual: expense is created.")
     @pytest.mark.use_ai
@@ -143,6 +148,7 @@ class TestWeb:
         )
         
     # 6
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Verify deletion of an expense")
     @allure.description("Adds a temporary expense, clicks its delete button, and verifies it is removed from the list")
     def test06_delete_expense(self):
@@ -167,6 +173,7 @@ class TestWeb:
         )
 
     # 7
+    @allure.severity(allure.severity_level.MINOR)
     @allure.title("Verify creation of expense with a very long description")
     @allure.description("Boundary test: Adds an expense with a 100-character description to ensure the UI handles it correctly")
     @pytest.mark.xfail(reason="Known Bug: Long text overflows the expense card container")
@@ -179,6 +186,7 @@ class TestWeb:
         WebVerify.verify_no_container_overflow(self.page, last_item_selector)
 
     # 8
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Verify data persistence after page reload")
     @allure.description("Adds an expense, reloads the page, and verifies the expense is still displayed (checks LocalStorage)")
     def test08_data_persistence_on_reload(self):
@@ -190,6 +198,7 @@ class TestWeb:
         WebVerify.contain_text(self.page, last_item_selector, unique_desc)
 
     # 9
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Verify creation of expense with empty amount is prevented")
     @allure.description("Negative test: Tries to add an expense without entering an amount and verifies it isn't added")
     def test09_empty_amount_validation(self):
@@ -202,6 +211,7 @@ class TestWeb:
             expected_count=initial_count)
 
     # 10
+    @allure.severity(allure.severity_level.MINOR)
     @allure.title("AI Failure Analysis Test (Global Hook Demo)")
     @allure.description("Intentionally fails to demonstrate the global AI error analysis hook")
     @pytest.mark.use_ai

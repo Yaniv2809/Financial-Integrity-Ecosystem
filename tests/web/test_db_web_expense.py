@@ -18,6 +18,7 @@ from config.config import ConfigManager
 class TestDBWeb:
     db_path = ConfigManager.get_db_path()
 
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Web & DB: Inject full DB data to Web UI")
     @allure.description("Reads a complete record from SQLite and injects it into the expense tracker website.")
     def test01_web_driven_by_db(self):
