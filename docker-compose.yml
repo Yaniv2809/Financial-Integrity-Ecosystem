@@ -25,6 +25,8 @@ services:
       mysql:
         condition: service_healthy
     environment:
+      CI: "true"
+      HEADLESS: "true"
       DB_TYPE: mysql
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306

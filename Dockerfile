@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     ca-certificates \
+    default-mysql-client \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
@@ -82,10 +83,13 @@ EXPOSE 5000
 # Stage 9: Set Environment Variables
 # ==========================================
 ENV PYTHONUNBUFFERED=1
-ENV PYTEST_ADDOPTS="--html=reports/report.html --self-contained-html"
+ENV CI=true
+ENV HEADLESS=true
 
 # ==========================================
 # Stage 10: Entry Point
 # ==========================================
-# Start JSON Server + Flask in background, then run tests
-CMD ["sh", "-c", "cd json-server && npm start & cd /app && python server/app.py & sleep 5 && pytest -m 'not mobile'"]
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+CMD ["/app/docker-entrypoint.sh"]
