@@ -76,6 +76,26 @@ class DBActions:
         return adapted
 
     @staticmethod
+    @allure.step("Waiting for DB record: {query}")
+    def wait_for_db_record(db_path: str, query: str, params: tuple = (),
+                           timeout: float = 5.0, interval: float = 0.5) -> list:
+        """
+        Polls the DB until the query returns results or timeout is reached.
+        Like Explicit Wait but for database — no time.sleep, no guessing.
+        Useful for async architectures (Kafka, RabbitMQ, eventual consistency).
+        """
+        import time
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            result = DBActions.execute_query(db_path, query, params)
+            if result:
+                return result
+            time.sleep(interval)
+        raise TimeoutError(
+            f"DB record not found within {timeout}s. Query: {query}, Params: {params}"
+        )
+
+    @staticmethod
     @allure.step("Executing DB Query: {query}")
     def execute_query(db_path: str, query: str, params: tuple = ()) -> list:
         """

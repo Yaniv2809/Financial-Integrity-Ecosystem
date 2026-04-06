@@ -54,8 +54,8 @@ class TestE2EApiDb:
             created_id = response.json().get("id")
             assert created_id is not None, "API did not return an ID for the created expense"
 
-            # Step 2: Direct retrieval from the DB by ID returned from the API
-            records = DBActions.execute_query(
+            # Step 2: Poll DB until the record appears (handles async/eventual consistency)
+            records = DBActions.wait_for_db_record(
                 self.db_path,
                 "SELECT expense_name, amount, category FROM expenses WHERE id = ?",
                 (created_id,)
