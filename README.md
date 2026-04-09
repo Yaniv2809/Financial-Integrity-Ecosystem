@@ -51,6 +51,23 @@ The project covers **4 testing layers** (Web, API, Mobile, Database) with **53 a
 
 ---
 
+## Testing Philosophy
+
+In financial applications, the highest risk is not a broken button — it is **silent data inconsistency**. A transaction that appears successful on screen but never reaches the database, or reaches it with the wrong amount, can have real monetary impact. This framework is built around that principle.
+
+| Layer | What It Validates | Business Risk It Mitigates |
+|-------|-------------------|---------------------------|
+| **Web UI** | User-facing forms, inputs, visual feedback | Users see incorrect data or believe an action succeeded when it didn't |
+| **API** | Contract compliance, status codes, payloads | Integration partners or frontend receive malformed or missing data |
+| **Database** | Record existence, field accuracy, constraints | Financial records are lost, duplicated, or silently corrupted |
+| **Cross-Layer E2E** | Data flows correctly between all systems | UI shows $100, API returns $100, but DB stored $0 — nobody notices until audit |
+
+The cross-layer tests use **Set Theory validation** — capturing DB state before and after each operation, then using set difference to mathematically prove that exactly one record changed, with exactly the expected values. This is not a pattern commonly seen in portfolio projects, because most projects test layers in isolation. In financial systems, isolation is not enough.
+
+> **A note on architecture scope:** The Workflow Orchestration layer and strict Action/Verification separation are intentionally more elaborate than this application size requires. This is a deliberate design choice — the architecture demonstrates patterns that become essential at scale (50+ page objects, multiple teams, shared test infrastructure), while remaining fully functional for this scope. In a smaller project, a flatter structure would be equally valid.
+
+---
+
 ## Architecture
 
 ```
@@ -89,7 +106,7 @@ Each layer has a single responsibility:
 ## Design Patterns
 
 ### Page Object Model (POM)
-Strict separation — page objects contain only locator constants as class-level strings. No `find_element`, no `self.driver`, no business logic.
+Strict separation — page objects contain only locator constants as class-level strings. No `find_element`, no `self.driver`, no business logic. Locators use CSS IDs and classes provided by the SUT. In a production environment where QA owns the frontend, `data-testid` attributes would be the preferred resilience strategy.
 
 ### Action / Verification Extensions
 All methods are `@staticmethod` decorated with `@allure.step`. Driver or session is passed as the first parameter. Web uses Playwright auto-waiting; Mobile uses explicit `WebDriverWait`.
