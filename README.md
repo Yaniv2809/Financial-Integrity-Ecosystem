@@ -277,50 +277,68 @@ Mobile tests are excluded from CI (require physical device) and run locally.
 
 ```
 Financial-Integrity-Ecosystem/
-├── .github/workflows/ci.yml        # GitHub Actions CI/CD pipeline
+├── .github/workflows/ci.yml            # GitHub Actions CI/CD pipeline
 ├── config/
-│   └── config.json                  # Environment configs (QA, dev, production)
+│   ├── config.py                        # ConfigManager with env var overrides
+│   └── config.json                      # Environment configs (QA endpoints, DB, browser)
 ├── data/
-│   ├── ddt/                         # DDT data files (JSON)
-│   ├── e2e/                         # E2E test data
-│   ├── web/expense_data.csv         # Web test data (CSV)
-│   ├── mobile/                      # Mobile config & data paths
-│   └── init_mysql.sql               # MySQL schema initialization
+│   ├── api/api_expense_data.py          # API test data paths
+│   ├── ddt/
+│   │   ├── expenses_json_data.json      # DDT data for API (JSON)
+│   │   └── mobile_expense_data.json     # Mobile DDT data (JSON)
+│   ├── e2e/
+│   │   ├── e2e_expense_data.py          # E2E test data paths
+│   │   └── e2e_expense_data.json        # E2E negative/boundary test data
+│   ├── web/
+│   │   ├── web_expense_data.py          # Web test data paths
+│   │   └── expense_data.csv             # Web DDT data (CSV)
+│   ├── mobile/
+│   │   ├── mobile.py                    # Mobile config (APK path, capabilities)
+│   │   └── mobile_expense_data.py       # Mobile test data paths
+│   └── init_mysql.sql                   # MySQL schema initialization
 ├── extensions/
-│   ├── ui_actions.py                # Playwright UI interactions
-│   ├── api_actions.py               # HTTP methods (GET/POST/PUT/DELETE)
-│   ├── mobile_actions.py            # Appium mobile interactions
-│   ├── db_actions.py                # SQL DQL/DML operations
-│   ├── web_verification.py          # Web assertion wrappers
-│   ├── api_verification.py          # API response assertions
-│   ├── mobile_verifications.py      # Mobile element assertions
-│   └── db_verifications.py          # Database assertion helpers
+│   ├── ui_actions.py                    # Playwright UI interactions
+│   ├── api_actions.py                   # HTTP methods (GET/POST/PUT/DELETE)
+│   ├── mobile_actions.py               # Appium mobile interactions
+│   ├── db_actions.py                    # SQL operations + async DB polling
+│   ├── web_verification.py             # Web assertion wrappers
+│   ├── api_verification.py             # API response assertions
+│   ├── mobile_verifications.py         # Mobile element assertions
+│   └── db_verifications.py             # Database assertion helpers
 ├── page_objects/
-│   ├── web/expense_tracker_page.py  # Web UI selectors
-│   └── mobile/expense_mobile_page.py # Mobile UiAutomator selectors
+│   ├── web/expense_tracker_page.py      # Web UI selectors (CSS/XPath)
+│   └── mobile/expense_mobile_page.py    # Mobile UiAutomator selectors
 ├── workflows/
-│   ├── web/web_workflows_expense.py # Web business flows
-│   ├── api/api_workflows_expense.py # API business flows
-│   └── mobile/mobile_workflows.py   # Mobile business flows
+│   ├── web/web_workflows_expense.py     # Web business flows
+│   ├── api/api_workflows_expense.py     # API business flows
+│   └── mobile/mobile_workflows.py       # Mobile business flows
 ├── tests/
-│   ├── web/                         # Web UI test suite (3 files)
-│   ├── api/                         # API test suite (3 files)
-│   ├── mobile/                      # Mobile test suite (1 file)
-│   ├── test_e2e_web_api_db.py       # Cross-layer E2E
-│   └── test_e2e_negative_amount.py  # Negative E2E + boundary
-├── server/app.py                    # Flask API backend
-├── json-server/db.json              # JSON Server mock data
+│   ├── api/
+│   │   ├── test_api_expense.py          # API CRUD + DDT + negative (10 tests)
+│   │   ├── test_db_api_expense.py       # API → DB cross-layer (1 test)
+│   │   └── test_e2e_api_db_expense.py   # API ↔ DB E2E + set theory (5 tests)
+│   ├── web/
+│   │   ├── test_web_expense.py          # Web CRUD + DDT + boundary (10 tests)
+│   │   ├── test_db_web_expense.py       # DB → Web cross-layer (1 test)
+│   │   └── test_e2e_web_expense.py      # Web full lifecycle E2E (1 test)
+│   ├── mobile/
+│   │   └── test_mobile_expense.py       # Mobile CRUD + DDT + boundary (16 tests)
+│   ├── test_e2e_web_api_db.py           # Cross-layer: Web → API → DB (1 test)
+│   └── test_e2e_negative_amount.py      # Negative E2E + VARCHAR boundary (2 tests)
+├── server/app.py                        # Flask API backend with validation
+├── json-server/db.json                  # JSON Server mock data
 ├── utils/
-│   ├── common_ops.py                # DDT helpers (CSV/JSON readers)
-│   ├── ai.py                        # AI-powered error analysis
-│   └── ai_test_generator.py         # AI test case generator
-├── conftest.py                      # Pytest fixtures (all layers)
-├── pytest.ini                       # Pytest configuration & markers
-├── docker-compose.yml               # MySQL + app orchestration
-├── Dockerfile                       # Container build (Python + Node + Playwright)
-├── docker-entrypoint.sh             # Docker startup script (servers + tests)
-├── requirements.txt                 # Python dependencies
-└── .env.example                     # Environment variable template
+│   ├── common_ops.py                    # DDT helpers (CSV/JSON readers)
+│   ├── logger.py                        # Logging utility
+│   ├── ai.py                            # AI-powered error analysis (Groq)
+│   └── ai_test_generator.py             # AI bug classification
+├── conftest.py                          # Pytest fixtures (all layers)
+├── pytest.ini                           # Pytest configuration & markers
+├── Dockerfile                           # Container build (Python + Node + Playwright)
+├── docker-compose.yml                   # MySQL + app orchestration
+├── docker-entrypoint.sh                 # Docker startup (MySQL wait + servers + tests)
+├── requirements.txt                     # Python dependencies
+└── .env.example                         # Environment variable template
 ```
 
 ---
