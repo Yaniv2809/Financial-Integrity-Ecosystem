@@ -1,0 +1,4 @@
+Name: E2E_Negative_1775852456
+Amount: -50.0
+Date: 2026-05-15
+Category: education
