@@ -1,2 +1,0 @@
-
-Count before delete: 9

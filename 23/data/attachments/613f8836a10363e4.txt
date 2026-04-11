@@ -1,5 +1,0 @@
-2026-04-10 20:21:01 - INFO - UI Action: Typing 'Overflow_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_1775852461' into element with selector: 'input[id='expense-name']'
-2026-04-10 20:21:02 - INFO - UI Action: Typing '100.0' into element with selector: 'input[id='expense-amount']'
-2026-04-10 20:21:03 - INFO - UI Action: Selecting 'Food' in dropdown with selector: 'select[id='expense-category']'
-2026-04-10 20:21:04 - INFO - UI Action: Typing '2026-06-01' into element with selector: 'input[id='expense-date']'
-2026-04-10 20:21:06 - ERROR - DB Error: 1406 (22001): Data too long for column 'expense_name' at row 1

@@ -1,1 +1,0 @@
-[('E2E_Post_Update_9113', 200.0, 'Fashion')]

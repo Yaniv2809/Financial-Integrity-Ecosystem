@@ -1,9 +1,0 @@
-
-[TEST] Expense name length: 311 chars (DB limit: VARCHAR(255))
-[BUG] Web UI accepted 311-char name without validation
-[UI EXTRACTED] Name length in DOM: 311 chars
-
-[PASS] MySQL rejected long name: 1406 (22001): Data too long for column 'expense_name' at row 1
-[DB VERIFY] Confirmed: No truncated record in MySQL
-
-[TEARDOWN] Closing Browser...

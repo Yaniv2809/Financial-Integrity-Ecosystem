@@ -1,3 +1,0 @@
-Web UI Bug: Accepted negative amount -50.0
-MySQL Response: CHECK constraint blocked the INSERT
-Error: 3819 (HY000): Check constraint 'expenses_chk_1' is violated.

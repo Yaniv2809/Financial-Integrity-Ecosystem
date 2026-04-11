@@ -1,4 +1,0 @@
-2026-04-10 20:21:23 - INFO - UI Action: Typing 'E2E_Test_1775852483' into element with selector: 'input[id='expense-name']'
-2026-04-10 20:21:24 - INFO - UI Action: Typing '777' into element with selector: 'input[id='expense-amount']'
-2026-04-10 20:21:25 - INFO - UI Action: Selecting 'Education' in dropdown with selector: 'select[id='expense-category']'
-2026-04-10 20:21:26 - INFO - UI Action: Typing '2025-07-01' into element with selector: 'input[id='expense-date']'

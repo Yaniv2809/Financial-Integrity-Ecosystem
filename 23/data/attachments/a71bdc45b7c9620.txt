@@ -1,4 +1,0 @@
-Name: E2E_Web2All_1775852468
-Amount: 555.0
-Date: 2026-05-15
-Category: education

@@ -1,5 +1,0 @@
-2026-04-10 20:20:56 - INFO - UI Action: Typing 'E2E_Negative_1775852456' into element with selector: 'input[id='expense-name']'
-2026-04-10 20:20:57 - INFO - UI Action: Typing '-50.0' into element with selector: 'input[id='expense-amount']'
-2026-04-10 20:20:58 - INFO - UI Action: Selecting 'Education' in dropdown with selector: 'select[id='expense-category']'
-2026-04-10 20:20:59 - INFO - UI Action: Typing '2026-05-15' into element with selector: 'input[id='expense-date']'
-2026-04-10 20:21:01 - ERROR - DB Error: 3819 (HY000): Check constraint 'expenses_chk_1' is violated.
