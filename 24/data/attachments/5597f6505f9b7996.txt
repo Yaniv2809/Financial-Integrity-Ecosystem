@@ -1,0 +1,8 @@
+
+[SETUP] Launching Browser (headless=True, slow_mo=1000)...
+
+[BUG] Web UI accepted negative amount: -50.0
+[UI EXTRACTED] Name: E2E_Negative_1775870900 | Amount: -50.0 | Date: 2026-05-15 | Category: education
+
+[PASS] MySQL blocked negative amount: 3819 (HY000): Check constraint 'expenses_chk_1' is violated.
+[DB VERIFY] Confirmed: No record with negative amount in MySQL
