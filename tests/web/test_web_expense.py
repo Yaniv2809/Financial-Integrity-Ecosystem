@@ -30,7 +30,7 @@ class TestWeb:
             category=data["category"]  
         )
         
-        # שימוש בתחביר >> nth=-1 כדי לגשת לאלמנט האחרון ישירות דרך המחרוזת של הסלקטור
+        # Selectors for the last added expense (using nth=-1 to target the most recent entry)
         name_selector = f"{ExpenseTrackerPage.expense_name_items} >> nth=-1"
         amount_selector = f"{ExpenseTrackerPage.expense_amount_items} >> nth=-1"
         date_selector = f"{ExpenseTrackerPage.expense_date_items} >> nth=-1"
