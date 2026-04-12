@@ -1,0 +1,4 @@
+2026-04-12 21:04:16 - INFO - UI Action: Typing 'Persistence Expense Test' into element with selector: 'input[id='expense-name']'
+2026-04-12 21:04:17 - INFO - UI Action: Typing '100' into element with selector: 'input[id='expense-amount']'
+2026-04-12 21:04:18 - INFO - UI Action: Selecting 'Food' in dropdown with selector: 'select[id='expense-category']'
+2026-04-12 21:04:19 - INFO - UI Action: Typing '2023-10-15' into element with selector: 'input[id='expense-date']'

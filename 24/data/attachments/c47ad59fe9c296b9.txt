@@ -1,4 +1,0 @@
-INFO     AutomationLogger:logger.py:54 UI Action: Typing 'E2E_Test_1775870929' into element with selector: 'input[id='expense-name']'
-INFO     AutomationLogger:logger.py:54 UI Action: Typing '777' into element with selector: 'input[id='expense-amount']'
-INFO     AutomationLogger:logger.py:54 UI Action: Selecting 'Education' in dropdown with selector: 'select[id='expense-category']'
-INFO     AutomationLogger:logger.py:54 UI Action: Typing '2025-07-01' into element with selector: 'input[id='expense-date']'

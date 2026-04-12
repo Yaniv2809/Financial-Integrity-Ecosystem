@@ -1,4 +1,0 @@
-2026-04-11 01:29:29 - INFO - UI Action: Typing 'Business Trip Paris (100 EUR)' into element with selector: 'input[id='expense-name']'
-2026-04-11 01:29:30 - INFO - UI Action: Typing '117.19' into element with selector: 'input[id='expense-amount']'
-2026-04-11 01:29:31 - INFO - UI Action: Selecting 'Transportation' in dropdown with selector: 'select[id='expense-category']'
-2026-04-11 01:29:32 - INFO - UI Action: Typing '2025-06-10' into element with selector: 'input[id='expense-date']'

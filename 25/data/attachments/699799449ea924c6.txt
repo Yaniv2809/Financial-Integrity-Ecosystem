@@ -1,0 +1,2 @@
+2026-04-12 21:02:40 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-04-12 21:02:40 - INFO - API Action: Sending DELETE request to http://localhost:3000/expenses/gICUsZ7

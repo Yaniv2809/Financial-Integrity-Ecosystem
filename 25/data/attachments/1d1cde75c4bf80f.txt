@@ -1,0 +1,1 @@
+2026-04-12 21:02:40 - INFO - API Action: Sending GET request to http://localhost:3000/expenses

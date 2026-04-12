@@ -1,1 +1,0 @@
-INFO     AutomationLogger:logger.py:54 API Action: Sending DELETE request to http://localhost:3000/expenses/0Jz-qEX

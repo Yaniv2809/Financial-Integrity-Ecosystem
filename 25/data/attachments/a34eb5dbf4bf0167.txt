@@ -1,0 +1,22 @@
+
+[SETUP] Launching Browser (headless=True, slow_mo=1000)...
+
+[SETUP] Preparing API Environment with Smart Retries...
+
+[UI EXTRACTED] Name: E2E_Web2All_1776027776 | Amount: 555.0 | Date: 2026-05-15 | Category: education
+[API] Created record with ID: 9KGSVph
+[DB] Inserted record: E2E_Web2All_1776027776
+[API VERIFY] Record confirmed in JSON server
+[DB VERIFY] Record confirmed in SQLite
+
+[PERFORMANCE]
+API Performance (10 iterations):
+  Avg: 0.0052s | P95: 0.0055s | Min: 0.0048s | Max: 0.0061s | Degradation: 2.5%
+DB Performance (10 iterations):
+  Avg: 0.0296s | P95: 0.0299s | Min: 0.0289s | Max: 0.0322s | Degradation: -1.9%
+[CLEANUP] Deleted API record ID: 9KGSVph
+[CLEANUP] Deleted all records (main + 10 perf iterations)
+
+[TEARDOWN] Closing API Session...
+
+[TEARDOWN] Closing Browser...

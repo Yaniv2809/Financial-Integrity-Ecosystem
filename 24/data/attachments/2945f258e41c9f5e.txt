@@ -1,2 +1,0 @@
-INFO     AutomationLogger:logger.py:54 API Action: Sending POST request to http://localhost:3000/expenses
-INFO     AutomationLogger:logger.py:54 API Action: Sending DELETE request to http://localhost:3000/expenses/sGd84Uj

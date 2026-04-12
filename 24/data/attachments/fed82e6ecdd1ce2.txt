@@ -1,1 +1,0 @@
-[('E2E_API_to_DB_4599', 22.91, 'Education')]

@@ -1,0 +1,4 @@
+API Performance (10 iterations):
+  Avg: 0.0052s | P95: 0.0055s | Min: 0.0048s | Max: 0.0061s | Degradation: 2.5%
+DB Performance (10 iterations):
+  Avg: 0.0296s | P95: 0.0299s | Min: 0.0289s | Max: 0.0322s | Degradation: -1.9%
