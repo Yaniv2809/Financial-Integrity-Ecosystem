@@ -1,0 +1,1 @@
+2026-05-10 14:59:58 - INFO - API Action: Sending DELETE request to http://localhost:3000/expenses/invalid_id_9999

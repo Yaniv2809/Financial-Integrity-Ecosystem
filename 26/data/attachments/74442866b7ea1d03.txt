@@ -1,0 +1,4 @@
+2026-05-10 15:00:43 - INFO - UI Action: Typing 'Business Lunch Web' into element with selector: 'input[id='expense-name']'
+2026-05-10 15:00:44 - INFO - UI Action: Typing '150' into element with selector: 'input[id='expense-amount']'
+2026-05-10 15:00:45 - INFO - UI Action: Selecting 'Food' in dropdown with selector: 'select[id='expense-category']'
+2026-05-10 15:00:46 - INFO - UI Action: Typing '2025-05-20' into element with selector: 'input[id='expense-date']'

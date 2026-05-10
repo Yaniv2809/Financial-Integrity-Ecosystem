@@ -1,0 +1,22 @@
+
+[SETUP] Launching Browser (headless=True, slow_mo=1000)...
+
+[SETUP] Preparing API Environment with Smart Retries...
+
+[UI EXTRACTED] Name: E2E_Web2All_1778425216 | Amount: 555.0 | Date: 2026-05-15 | Category: education
+[API] Created record with ID: z1QdC74
+[DB] Inserted record: E2E_Web2All_1778425216
+[API VERIFY] Record confirmed in JSON server
+[DB VERIFY] Record confirmed in SQLite
+
+[PERFORMANCE]
+API Performance (10 iterations):
+  Avg: 0.0047s | P95: 0.0055s | Min: 0.0035s | Max: 0.0056s | Degradation: 5.8%
+DB Performance (10 iterations):
+  Avg: 0.0859s | P95: 0.1554s | Min: 0.0205s | Max: 0.2216s | Degradation: 70.3%
+[CLEANUP] Deleted API record ID: z1QdC74
+[CLEANUP] Deleted all records (main + 10 perf iterations)
+
+[TEARDOWN] Closing API Session...
+
+[TEARDOWN] Closing Browser...
