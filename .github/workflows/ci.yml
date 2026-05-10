@@ -111,5 +111,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-history
+          keep_files: true
           user_name: 'Yaniv2809'
           user_email: 'yaniv2809@users.noreply.github.com'
