@@ -1,0 +1,5 @@
+2026-05-10 17:36:01 - INFO - Verify: Element 'new UiSelector().resourceId("expense-name")' is displayed
+2026-05-10 17:36:01 - INFO - Verify: Element 'new UiSelector().resourceId("expense-amount")' is displayed
+2026-05-10 17:36:01 - INFO - Verify: Element 'new UiSelector().resourceId("expense-date")' is displayed
+2026-05-10 17:36:01 - INFO - Verify: Element 'new UiSelector().resourceId("expense-category")' is displayed
+2026-05-10 17:36:01 - INFO - Verify: Element 'new UiSelector().resourceId("add-expense")' is displayed

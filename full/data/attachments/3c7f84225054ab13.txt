@@ -1,0 +1,8 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Filling 'Keyboard Test' into element 'new UiSelector().resourceId("expense-name")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Keyboard hidden
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Typing '75' via mobile:type script
+INFO     AutomationLogger:logger.py:54 Mobile Action: Keyboard hidden
+INFO     AutomationLogger:logger.py:54 Mobile Action: Pressing back button
+INFO     AutomationLogger:logger.py:54 Verify: Keyboard is not visible

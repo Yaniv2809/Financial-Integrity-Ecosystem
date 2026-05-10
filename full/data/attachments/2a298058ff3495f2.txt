@@ -1,0 +1,6 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Native alert found: 'בדף שבכתובת 'file://' כתוב כך:
+Please enter all details for the expense.' — accepting
+INFO     AutomationLogger:logger.py:54 Verify: Text 'null' is correctly not on screen
+INFO     AutomationLogger:logger.py:54 Verify: Text 'undefined' is correctly not on screen

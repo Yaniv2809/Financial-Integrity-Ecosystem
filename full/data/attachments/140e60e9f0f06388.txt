@@ -1,0 +1,10 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Filling '!@#$%^&*()_+=' into element 'new UiSelector().resourceId("expense-name")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Typing '100' via mobile:type script
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("Food")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+INFO     AutomationLogger:logger.py:54 Verify: Text '!@#$%^&*()_+=' found on screen after scrolling

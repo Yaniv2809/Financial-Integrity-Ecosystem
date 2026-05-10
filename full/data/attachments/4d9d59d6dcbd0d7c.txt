@@ -1,0 +1,10 @@
+2026-05-10 17:39:23 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:39:26 - INFO - Mobile Action: Filling 'Large Amount' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:39:28 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:39:29 - INFO - Mobile Action: Typing '9999999.99' via mobile:type script
+2026-05-10 17:39:31 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:39:32 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:39:32 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:39:33 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Transportation")'
+2026-05-10 17:39:34 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:39:54 - INFO - Verify: Text 'Large Amount' found on screen after scrolling

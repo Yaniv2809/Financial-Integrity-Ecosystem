@@ -1,0 +1,8 @@
+2026-05-10 17:41:10 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:41:14 - INFO - Mobile Action: Filling 'Keyboard Test' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:41:22 - INFO - Mobile Action: Keyboard hidden
+2026-05-10 17:41:22 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:41:22 - INFO - Mobile Action: Typing '75' via mobile:type script
+2026-05-10 17:41:32 - INFO - Mobile Action: Keyboard hidden
+2026-05-10 17:41:32 - INFO - Mobile Action: Pressing back button
+2026-05-10 17:41:33 - INFO - Verify: Keyboard is not visible

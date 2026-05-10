@@ -1,0 +1,10 @@
+2026-05-10 17:36:56 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:36:59 - INFO - Mobile Action: Filling 'DDT_Conference Fee' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:37:00 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:37:01 - INFO - Mobile Action: Typing '200' via mobile:type script
+2026-05-10 17:37:03 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:37:04 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:37:06 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:37:07 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Education")'
+2026-05-10 17:37:07 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:37:22 - INFO - Verify: Text 'DDT_Conference Fee' found on screen after scrolling

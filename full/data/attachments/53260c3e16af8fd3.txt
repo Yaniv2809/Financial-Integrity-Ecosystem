@@ -1,0 +1,2 @@
+2026-05-10 17:40:45 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:40:49 - INFO - Mobile Action: Filling 'Persistence Test' into element 'new UiSelector().resourceId("expense-name")'

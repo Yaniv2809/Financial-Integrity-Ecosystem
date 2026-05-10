@@ -1,0 +1,14 @@
+2026-05-10 17:37:23 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:37:26 - INFO - Mobile Action: Filling 'Full Flow Expense' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:37:27 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:37:28 - INFO - Mobile Action: Typing '320.75' via mobile:type script
+2026-05-10 17:37:30 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:37:31 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:37:33 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:37:34 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Transportation")'
+2026-05-10 17:37:34 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:37:49 - INFO - Verify: Text 'Full Flow Expense' found on screen after scrolling
+2026-05-10 17:37:50 - INFO - Mobile Action: Deleting expense 'Full Flow Expense'
+2026-05-10 17:37:50 - INFO - Mobile Action: Delete clicked using XPath: //*[contains(@text, 'Full Flow Expense')]/..//*[@text='Delete']
+2026-05-10 17:37:51 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:37:59 - INFO - Verify: Text 'Full Flow Expense' is correctly not on screen

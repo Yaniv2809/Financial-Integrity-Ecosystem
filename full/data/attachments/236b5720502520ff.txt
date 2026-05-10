@@ -1,0 +1,14 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Filling 'Full Flow Expense' into element 'new UiSelector().resourceId("expense-name")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Typing '320.75' via mobile:type script
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("Transportation")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+INFO     AutomationLogger:logger.py:54 Verify: Text 'Full Flow Expense' found on screen after scrolling
+INFO     AutomationLogger:logger.py:54 Mobile Action: Deleting expense 'Full Flow Expense'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Delete clicked using XPath: //*[contains(@text, 'Full Flow Expense')]/..//*[@text='Delete']
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Verify: Text 'Full Flow Expense' is correctly not on screen

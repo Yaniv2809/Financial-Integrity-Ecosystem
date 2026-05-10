@@ -1,0 +1,10 @@
+2026-05-10 17:36:14 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:36:18 - INFO - Mobile Action: Filling 'DDT_Coffee' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:36:18 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:36:20 - INFO - Mobile Action: Typing '15' via mobile:type script
+2026-05-10 17:36:21 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:36:23 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:36:24 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:36:25 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Food")'
+2026-05-10 17:36:26 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:36:27 - INFO - Verify: Text 'DDT_Coffee' found on screen

@@ -1,0 +1,2 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Filling 'Persistence Test' into element 'new UiSelector().resourceId("expense-name")'

@@ -1,0 +1,3 @@
+Attempted amount: -50
+Expected: App should reject negative amount
+Actual: Verify on screen whether expense was added

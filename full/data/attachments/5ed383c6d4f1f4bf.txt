@@ -1,0 +1,10 @@
+2026-05-10 17:36:41 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:36:44 - INFO - Mobile Action: Filling 'DDT_Hotel Berlin' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:36:46 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:36:47 - INFO - Mobile Action: Typing '850.50' via mobile:type script
+2026-05-10 17:36:49 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:36:49 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:36:50 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:36:51 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Accommodation")'
+2026-05-10 17:36:52 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:36:54 - INFO - Verify: Text 'DDT_Hotel Berlin' found on screen

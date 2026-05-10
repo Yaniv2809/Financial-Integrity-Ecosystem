@@ -1,0 +1,6 @@
+2026-05-10 17:38:00 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:38:03 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:38:05 - INFO - Mobile Action: Native alert found: 'בדף שבכתובת 'file://' כתוב כך:
+Please enter all details for the expense.' — accepting
+2026-05-10 17:38:09 - INFO - Verify: Text 'null' is correctly not on screen
+2026-05-10 17:38:13 - INFO - Verify: Text 'undefined' is correctly not on screen

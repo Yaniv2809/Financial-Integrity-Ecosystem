@@ -1,0 +1,10 @@
+2026-05-10 17:38:55 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:38:58 - INFO - Mobile Action: Filling 'BoundaryTestNameWithExactlyOneHundredCharactersForTestingPurposesInTheExpenseTrackerMobileApplication!' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:39:00 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:39:00 - INFO - Mobile Action: Typing '10' via mobile:type script
+2026-05-10 17:39:02 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:39:03 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:39:05 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:39:05 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Food")'
+2026-05-10 17:39:06 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:39:21 - INFO - Verify: Text 'BoundaryTe' found on screen after scrolling

@@ -1,0 +1,5 @@
+INFO     AutomationLogger:logger.py:54 Verify: Element 'new UiSelector().resourceId("expense-name")' is displayed
+INFO     AutomationLogger:logger.py:54 Verify: Element 'new UiSelector().resourceId("expense-amount")' is displayed
+INFO     AutomationLogger:logger.py:54 Verify: Element 'new UiSelector().resourceId("expense-date")' is displayed
+INFO     AutomationLogger:logger.py:54 Verify: Element 'new UiSelector().resourceId("expense-category")' is displayed
+INFO     AutomationLogger:logger.py:54 Verify: Element 'new UiSelector().resourceId("add-expense")' is displayed

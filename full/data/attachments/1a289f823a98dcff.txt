@@ -1,0 +1,3 @@
+Web UI Bug: Accepted 311-char name (no client-side limit)
+MySQL Response: Rejected — exceeds VARCHAR(255)
+Error: 1406 (22001): Data too long for column 'expense_name' at row 1

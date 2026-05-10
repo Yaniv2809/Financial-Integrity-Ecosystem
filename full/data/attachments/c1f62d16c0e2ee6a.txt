@@ -1,0 +1,5 @@
+INFO     AutomationLogger:logger.py:54 UI Action: Typing 'Overflow_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_1778423452' into element with selector: 'input[id='expense-name']'
+INFO     AutomationLogger:logger.py:54 UI Action: Typing '100.0' into element with selector: 'input[id='expense-amount']'
+INFO     AutomationLogger:logger.py:54 UI Action: Selecting 'Food' in dropdown with selector: 'select[id='expense-category']'
+INFO     AutomationLogger:logger.py:54 UI Action: Typing '2026-06-01' into element with selector: 'input[id='expense-date']'
+ERROR    AutomationLogger:logger.py:57 DB Error: 1406 (22001): Data too long for column 'expense_name' at row 1

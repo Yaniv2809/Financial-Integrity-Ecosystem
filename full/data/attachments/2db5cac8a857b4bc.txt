@@ -1,0 +1,10 @@
+2026-05-10 17:36:28 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:36:31 - INFO - Mobile Action: Filling 'DDT_Flight Ticket' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:36:32 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:36:33 - INFO - Mobile Action: Typing '1500' via mobile:type script
+2026-05-10 17:36:35 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:36:36 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:36:37 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:36:38 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Transportation")'
+2026-05-10 17:36:39 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:36:40 - INFO - Verify: Text 'DDT_Flight Ticket' found on screen

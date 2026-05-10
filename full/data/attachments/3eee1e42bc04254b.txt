@@ -1,0 +1,16 @@
+2026-05-10 17:31:01 - INFO - UI Action: Typing 'E2E_Web2All_1778423461' into element with selector: 'input[id='expense-name']'
+2026-05-10 17:31:03 - INFO - UI Action: Typing '555' into element with selector: 'input[id='expense-amount']'
+2026-05-10 17:31:04 - INFO - UI Action: Selecting 'Education' in dropdown with selector: 'select[id='expense-category']'
+2026-05-10 17:31:05 - INFO - UI Action: Typing '2026-05-15' into element with selector: 'input[id='expense-date']'
+2026-05-10 17:31:07 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:07 - INFO - API Action: Sending GET request to http://localhost:3000/expenses/69a0
+2026-05-10 17:31:07 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses
+2026-05-10 17:31:08 - INFO - API Action: Sending POST request to http://localhost:3000/expenses

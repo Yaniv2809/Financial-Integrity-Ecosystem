@@ -1,0 +1,15 @@
+2026-05-10 17:41:40 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:41:43 - INFO - Mobile Action: Filling 'Temp Expense' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:41:45 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:41:46 - INFO - Mobile Action: Typing '99' via mobile:type script
+2026-05-10 17:41:48 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:41:50 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:41:50 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:41:51 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Food")'
+2026-05-10 17:41:52 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:42:07 - INFO - Verify: Text 'Temp Expense' found on screen after scrolling
+2026-05-10 17:42:08 - INFO - Mobile Action: Deleting expense 'Temp Expense'
+2026-05-10 17:42:08 - INFO - Mobile Action: Delete clicked using XPath: //*[contains(@text, 'Temp Expense')]/..//*[@text='Delete']
+2026-05-10 17:42:09 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:42:13 - INFO - Mobile Action: Clearing element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:42:17 - INFO - Verify: Text 'Temp Expense' is correctly not on screen

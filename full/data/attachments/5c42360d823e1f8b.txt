@@ -1,0 +1,10 @@
+INFO     AutomationLogger:logger.py:54 Mobile Action: Scrolling to top of the screen
+INFO     AutomationLogger:logger.py:54 Mobile Action: Filling 'Large Amount' into element 'new UiSelector().resourceId("expense-name")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Typing '9999999.99' via mobile:type script
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().text("Transportation")'
+INFO     AutomationLogger:logger.py:54 Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+INFO     AutomationLogger:logger.py:54 Verify: Text 'Large Amount' found on screen after scrolling

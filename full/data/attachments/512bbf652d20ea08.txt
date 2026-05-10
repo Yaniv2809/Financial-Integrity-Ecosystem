@@ -1,0 +1,10 @@
+2026-05-10 17:36:01 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:36:05 - INFO - Mobile Action: Filling 'Business Lunch' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:36:06 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:36:06 - INFO - Mobile Action: Typing '85' via mobile:type script
+2026-05-10 17:36:08 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:36:09 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:36:10 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:36:12 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Food")'
+2026-05-10 17:36:12 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
+2026-05-10 17:36:13 - INFO - Verify: Text 'Business Lunch' found on screen

@@ -1,0 +1,9 @@
+2026-05-10 17:38:41 - INFO - Mobile Action: Scrolling to top of the screen
+2026-05-10 17:38:44 - INFO - Mobile Action: Filling 'Negative Amount Test' into element 'new UiSelector().resourceId("expense-name")'
+2026-05-10 17:38:45 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-amount")'
+2026-05-10 17:38:46 - INFO - Mobile Action: Typing '-50' via mobile:type script
+2026-05-10 17:38:48 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-date")'
+2026-05-10 17:38:50 - INFO - Mobile Action: Clicking element 'new UiSelector().text("הגדר")'
+2026-05-10 17:38:51 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("expense-category")'
+2026-05-10 17:38:52 - INFO - Mobile Action: Clicking element 'new UiSelector().text("Food")'
+2026-05-10 17:38:53 - INFO - Mobile Action: Clicking element 'new UiSelector().resourceId("add-expense")'
